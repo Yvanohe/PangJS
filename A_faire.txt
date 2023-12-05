@@ -1,0 +1,4 @@
+- changer icone joueur
+- changer icone fleche
+- Améliorer collision avec le joueur
+- faire plus de niveaux

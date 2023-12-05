@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <title>Jeu éclate bulles !</title>
+</head>
+
+<body>
+    <div class="conteneur">
+        <div id="menu_principal">
+            <div>
+                <img src="images/start_Button.png" alt="start button" class="button" id="startButton"
+                    onclick="startGame()">
+                <img src="images/pause_Button.png" alt="pause button" class="button" id="pauseButton"
+                    onclick="pauseGame()">
+                <img src="images/resume_Button.png" alt="pause button" class="button" id="resume_Button"
+                    onclick="resumeGame()">
+            </div>
+        </div>
+        <div id="aireJeu">
+            <div id="divTextResult">
+
+                <p id="textresult"></p>
+            </div>
+        </div>
+        <div id="statsJeu">
+            <div id="coeur">
+                <img src="images/player_lives_crop-noBackground.png" alt="image vie du joueur">
+                <img src="images/player_lives_crop-noBackground.png" alt="image vie du joueur">
+                <img src="images/player_lives_crop-noBackground.png" alt="image vie du joueur">
+            </div>
+            <p id="timer"></p>
+            <p id="level"></p>
+        </div>
+    </div>
+</body>
+
+<script src="modele.js"></script>
+<script src="controleur.js"></script>
+
+</html>

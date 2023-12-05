@@ -1,0 +1,10 @@
+Jeu programmé en javascript et s'exécutant sur un navigateur. Inspiré d'un jeu d'arcade des années 90 (nom inconnu)
+
+Principe :
+- Un personnage de se déplace à l'horizontal (à gauche et à droite) en bas de l'écran (au niveau du "sol")
+- Au-dessus de lui des bulles rebondissent sur le bas (le "sol") , le dessus et les cotés du cadre représant l'aire de jeu
+- le personnage peut tirer des fleches vers le haut et si ses fleches touchent une bulle celle-ci éclate en 2 sous-bulles plus petites
+- à partir d'une certaine petite taille, les bulles ne se subdivisent plus mais disparaissent
+- Le personnage ne doit pas se faire toucher par une bulle sinon il perd.
+- Le joueur gagne lorsqu'il a éclater toute les bulles.
+- Si le joueur n'éclate pas toutes les bulles avant un certains temps, il perd.
