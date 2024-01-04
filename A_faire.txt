@@ -1,4 +1,4 @@
-- changer icone joueur
+- Faire clignoter le joueur lorsqu'il perd une vie
+- le joueur est immunisé pendant 1 (ou 0.5s) après avoir perdu une vie.
 - changer icone fleche
-- Améliorer collision avec le joueur
 - faire plus de niveaux

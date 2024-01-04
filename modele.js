@@ -147,7 +147,7 @@ class Joueur extends ObjetJeu {
 
 
     constructor(positionX, positionY, pointDeVie) {
-        super(positionX, positionY, 5, 5);
+        super(positionX, positionY, 3, 13);
 
         this.pointDeVie = pointDeVie;
         this.vitesse = 0.5;

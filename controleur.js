@@ -13,9 +13,9 @@ var partie;
 //Gestion des événements
 window.onresize = displayALL;
 
-//Tableau pour conserver l'event du déplacement d'un joeur si une autre touche est tapée
+//Tableau pour conserver l'event du déplacement d'un joueur si une autre touche est tapée
 var keyDownRightLeft = { ArrowRight: false, ArrowLeft: false };
-//les eventListeners suivant permettent de gérer le déplacement du joueur par appui continuel sur une touche fleche (gauche/droite) du clavier sans interruption si apui sur une autre touche du clavier
+//les eventListeners suivant permettent de gérer le déplacement du joueur par appui continuel sur une touche fleche (gauche/droite) du clavier sans interruption si apui sur une autre touche du clavier (tel que l'espace pour tirer)
 document.addEventListener("keydown", function (event) {
     if (event.key == 'ArrowRight') {
         console.log("ARROWRIGHT : " + event.key);
@@ -114,7 +114,6 @@ function deplacementObjetsAutonomes() {
         var deltaX = bulle.vitesseX * Math.sin((bulle.direction / 360) * 2 * 3.14159);
 
         bulle.seDeplace(deltaX, deltaY);
-
     }
 
     for (fleche of partie.tableauFleche) {
@@ -169,9 +168,7 @@ function joueurTire(event) {
         for (fleche of partie.tableauFleche) {
             detruireFleche(fleche);
         }
-        console.log("IL TIRE")
         partie.tableauFleche.push(partie.joueur.tire());
-        console.log(partie.tableauFleche);
     }
 }
 
@@ -194,124 +191,119 @@ function eclatementBulle(bulle) {
     if (partie.niveau.tableauBulles.length == 0) {
         endRound();
     }
-
     afficherToutesLesBulles();
 }
 
 
 function checkCollision() {
-    // Les bulles sont des ellipses dont les paramètres (ae et be) de l'équation sont connus
-    // Les obstacles sont des droites d'équation y = ax+b (ou x = c pour le cas d'une droite verticale)
-    // Système à 2 équations :
-    // ellispe : (x-xc)²/(ae)² +(y-yc)²/(be)² = 1
-    // droite : y=ax + b
-    // par substitution équation du second degré :
-    // X²(be² + ae²a²) + X(2ae²ab - 2aae²yc - 2xcbe²) + (xc²be² +ae²b² -2ae²byc + ae²yc² - ae²be²) = 0
-    // Soit le discriminant :
-    // delta = B² - 4AC = (2ae²ab - 2aae²yc - 2xcbe²)² - 4(be² +ae²a²)(xc²be² + ae²b²-2ae²byc+ae²yc²+ae²yc²-ae²be²)
-    // si delta >= 0 alors une ou plusieurs solution => intersection de la bulle avec une limite donc rebondissement
-    // les limites ne sont pas des droites mais des segments donc vérification que les points sont dans les limites du segments
-    // cas spécial ou la droite est verticale donc d'équation x = positionX (Px)
-    // ae²Y² -2ae²ycY + be²Px² - 2Pxxcbe²+xc²be² + ae²yc²-ae²be² = 0
-    // delta = (2ae²yc)² -4ae²(be²Px²-2Pxxcbe²+xc²be²+ae²yc²-ae²be²)
-    var ratio = aireDeJeu.offsetWidth / aireDeJeu.offsetHeight;
-
+    // La collision de chaque bulle avec chaque objet (joueur, obstacles et fleches) est testée :
     for (bulle of partie.niveau.tableauBulles) {
-        var delta = -1;
-        var A;
-        var B;
-        var C;
+        //Collision avec Obstacle :   
         for (obstacle of partie.niveau.tableauObstacles) {
+            if (isCollisionWithBubble(bulle, obstacle.positionX, obstacle.positionXend, obstacle.positionY, obstacle.positionY - obstacle.tailleX, obstacle.a, obstacle.b, obstacle.orientation)) {
+                bulle.rebondi(obstacle.orientation);
+            }
+        }
 
-            if (obstacle.orientation != 0 && obstacle.orientation != 180) {
+        // Collision avec une fleche :
+        for (fleche of partie.tableauFleche) {
+            if (isCollisionWithBubble(bulle, fleche.positionX, fleche.positionX, fleche.positionY, 0, 0, 0, 0)) {
+                detruireFleche(fleche);
+                eclatementBulle(bulle);
+            }
+        }
 
-                A = bulle.be * bulle.be + bulle.ae * bulle.ae * obstacle.a * obstacle.a;
-                B = 2 * bulle.ae * bulle.ae * obstacle.a * obstacle.b - 2 * obstacle.a * bulle.ae * bulle.ae * bulle.yc - 2 * bulle.xc * bulle.be * bulle.be;
-                C = bulle.xc * bulle.xc * bulle.be * bulle.be + bulle.ae * bulle.ae * obstacle.b * obstacle.b - 2 * bulle.ae * bulle.ae * obstacle.b * bulle.yc + bulle.ae * bulle.ae * bulle.yc * bulle.yc - bulle.ae * bulle.ae * bulle.be * bulle.be;
+        //collision avec le joueur :
+        //Player left and right limits :
+        if (isCollisionWithBubble(bulle, partie.joueur.positionX, partie.joueur.positionX, partie.joueur.tailleY, 0, 0, partie.joueur.tailleY, 0) || isCollisionWithBubble(bulle, partie.joueur.positionX + partie.joueur.tailleX, partie.joueur.positionX + partie.joueur.tailleX, partie.joueur.tailleY, 0, 0, partie.joueur.tailleY, 0)) {
+            bulle.rebondi(0);
+            partie.joueur.estBlesse();
+            hidePlayerLives();
+            if (partie.joueur.pointDeVie == 0) {
+                endRound();
+                showResults("VOUS AVEZ PERDU ! VIES EPUISEES !")
+            }
+        }
+        //collision player upper limit :
+        if (isCollisionWithBubble(bulle, partie.joueur.positionX, partie.joueur.positionX + partie.joueur.tailleX, partie.joueur.positionY, 0, 0, partie.joueur.tailleY, 90)) {
+            bulle.rebondi(90);
+            partie.joueur.estBlesse();
+            hidePlayerLives();
 
+            if (partie.joueur.pointDeVie == 0) {
+                endRound();
+                showResults("VOUS AVEZ PERDU ! VIES EPUISEES !")
+            }
+        }
+
+
+        function isCollisionWithBubble(bulle, obstaclePositionX, obstacleEndingX, obstaclePositionY, obstacleEndingY, obstacleSlopeA, obstacleOrigineB, obstacleOrientation) {
+            //---------------------------------------------------------------------
+            // Les bulles sont des ellipses dont les paramètres (ae et be) de l'équation sont connus
+            // Les obstacles sont des droites d'équation y = ax+b (ou x = c pour le cas d'une droite verticale)
+            // Système à 2 équations :
+            // ellispe : (x-xc)²/(ae)² +(y-yc)²/(be)² = 1
+            // droite : y=ax + b
+            // par substitution équation du second degré :
+            // X²(be² + ae²a²) + X(2ae²ab - 2aae²yc - 2xcbe²) + (xc²be² +ae²b² -2ae²byc + ae²yc² - ae²be²) = 0
+            // Soit le discriminant :
+            // delta = B² - 4AC = (2ae²ab - 2aae²yc - 2xcbe²)² - 4(be² +ae²a²)(xc²be² + ae²b²-2ae²byc+ae²yc²+ae²yc²-ae²be²)
+            // si delta >= 0 alors une ou plusieurs solution => intersection de la bulle avec une limite donc rebondissement
+            // les limites ne sont pas des droites mais des segments donc vérification que les points sont dans les limites du segments
+            // cas spécial ou la droite est VERTICALE donc d'équation x = positionX (Px)
+            // ae²Y² -2ae²ycY + be²Px² - 2Pxxcbe²+xc²be² + ae²yc²-ae²be² = 0
+            // delta = (2ae²yc)² -4ae²(be²Px²-2Pxxcbe²+xc²be²+ae²yc²-ae²be²)
+            //-------------------------------------------------------------------------
+
+
+            // Non vertical obstacle :
+            if (obstacleOrientation != 0 && obstacleOrientation != 180) {
+                //second-degree equation parameters :
+                A = bulle.be * bulle.be + bulle.ae * bulle.ae * obstacleSlopeA * obstacleSlopeA;
+                B = 2 * bulle.ae * bulle.ae * obstacleSlopeA * obstacleOrigineB - 2 * obstacleSlopeA * bulle.ae * bulle.ae * bulle.yc - 2 * bulle.xc * bulle.be * bulle.be;
+                C = bulle.xc * bulle.xc * bulle.be * bulle.be + bulle.ae * bulle.ae * obstacleOrigineB * obstacleOrigineB - 2 * bulle.ae * bulle.ae * obstacleOrigineB * bulle.yc + bulle.ae * bulle.ae * bulle.yc * bulle.yc - bulle.ae * bulle.ae * bulle.be * bulle.be;
                 delta = B * B - 4 * A * C;
-
-
 
                 if (delta >= 0) {
                     // Verification que les coordonnées du point   d'impact sont bien compris dans les limites du segment de l'obstacle (jusqu'ici considéré comme une droite)
                     //solutions:
-                    var x1 = (-B - Math.sqrt(delta)) / (2 * A);
-                    var x2 = (-B + Math.sqrt(delta)) / (2 * A);
+                    let x1 = (-B - Math.sqrt(delta)) / (2 * A);
+                    let x2 = (-B + Math.sqrt(delta)) / (2 * A);
 
 
                     //if ((x1 >= obstacle.positionX && x1 <= (obstacle.positionX + obstacle.tailleX)) || (x2 >= obstacle.positionX && x2 <= (obstacle.positionX + obstacle.tailleX))) {
-                    if ((x1 >= obstacle.positionX && x1 <= (obstacle.positionXend)) || (x2 >= obstacle.positionX && x2 <= (obstacle.positionXend))) {
-
-                        bulle.rebondi(obstacle.orientation);
-
-
+                    if ((x1 >= obstaclePositionX && x1 <= (obstacleEndingX)) || (x2 >= obstaclePositionX && x2 <= (obstacleEndingX))) {
+                        return true;
+                    } else {
+                        return false;
                     }
+                } else {
+                    return false;
                 }
+            }
+            else {// vertical obstacle (orientation = 0 OR 180)
 
-            } else {
                 A = bulle.ae * bulle.ae
                 B = -2 * bulle.ae * bulle.ae * bulle.yc;
-                C = bulle.be * bulle.be * obstacle.positionX * obstacle.positionX - 2 * obstacle.positionX * bulle.xc * bulle.be * bulle.be + bulle.xc * bulle.xc * bulle.be * bulle.be + bulle.ae * bulle.ae * bulle.yc * bulle.yc - bulle.ae * bulle.ae * bulle.be * bulle.be;
+                C = bulle.be * bulle.be * obstaclePositionX * obstaclePositionX - 2 * obstaclePositionX * bulle.xc * bulle.be * bulle.be + bulle.xc * bulle.xc * bulle.be * bulle.be + bulle.ae * bulle.ae * bulle.yc * bulle.yc - bulle.ae * bulle.ae * bulle.be * bulle.be;
                 delta = B * B - 4 * A * C;
 
                 if (delta >= 0) {
                     // Verification que les coordonnées du point d'impact sont bien compris dans les limites du segment de l'obstacle (jusqu'ici considéré comme une droite)
                     //solutions:
-                    var y1 = (-B - Math.sqrt(delta)) / (2 * A);
-                    var y2 = (-B + Math.sqrt(delta)) / (2 * A);
+                    let y1 = (-B - Math.sqrt(delta)) / (2 * A);
+                    let y2 = (-B + Math.sqrt(delta)) / (2 * A);
 
+                    if (y1 < obstaclePositionY && y1 > obstacleEndingY || y2 < obstaclePositionY && y2 > obstacleEndingY) {
 
-                    if (y1 < obstacle.positionY && y1 > (obstacle.positionY - obstacle.tailleX) || y2 < obstacle.positionY && y2 > (obstacle.positionY - obstacle.tailleX)) {
-
-                        bulle.rebondi(obstacle.orientation);
-
+                        return true;
+                    } else {
+                        return false;
                     }
+                } else {
+                    return false;
                 }
             }
-        }
-        // Collision avec une fleche :
-        for (fleche of partie.tableauFleche) {
-            A = bulle.ae * bulle.ae
-            B = -2 * bulle.ae * bulle.ae * bulle.yc;
-            C = bulle.be * bulle.be * fleche.positionX * fleche.positionX - 2 * fleche.positionX * bulle.xc * bulle.be * bulle.be + bulle.xc * bulle.xc * bulle.be * bulle.be + bulle.ae * bulle.ae * bulle.yc * bulle.yc - bulle.ae * bulle.ae * bulle.be * bulle.be;
-
-            delta = B * B - 4 * A * C;
-            if (delta >= 0) {
-                var y1 = (-B - Math.sqrt(delta)) / (2 * A);
-                var y2 = (-B + Math.sqrt(delta)) / (2 * A);
-
-                if (y1 < fleche.positionY || y2 < fleche.positionY) {
-                    detruireFleche(fleche);
-                    eclatementBulle(bulle);
-                }
-            }
-        }
-
-        //collision avec le joueur :
-        //limite gauche joueur :
-        A = bulle.be * bulle.be;
-        B = - 2 * bulle.xc * bulle.be * bulle.be;
-        C = bulle.xc * bulle.xc * bulle.be * bulle.be + bulle.ae * bulle.ae * partie.joueur.tailleY * partie.joueur.tailleY - 2 * bulle.ae * bulle.ae * partie.joueur.tailleY * bulle.yc + bulle.ae * bulle.ae * bulle.yc * bulle.yc - bulle.ae * bulle.ae * bulle.be * bulle.be;
-
-        delta = B * B - 4 * A * C;
-
-        if (delta >= 0) {
-            var x1 = (-B - Math.sqrt(delta)) / (2 * A);
-            var x2 = (-B + Math.sqrt(delta)) / (2 * A);
-
-            if ((x1 >= partie.joueur.positionX - partie.joueur.tailleX / 2) && x1 <= (partie.joueur.positionX + partie.joueur.tailleX / 2) || (x1 >= partie.joueur.positionX - partie.joueur.tailleX / 2) && x1 <= (partie.joueur.positionX + partie.joueur.tailleX / 2)) {
-
-                bulle.rebondi(90);
-                partie.joueur.estBlesse();
-                hidePlayerLives();
-
-                if (partie.joueur.pointDeVie == 0) {
-                    endRound();
-                    showResults("VOUS AVEZ PERDU ! VIES EPUISEES !")
-                }
-            }
-
         }
     }
 }
@@ -332,12 +324,10 @@ function displayAllMovingObjects() {
     afficherToutesLesFleches();
 }
 
-
 function afficherToutesLesBulles() {
     for (bulle of partie.niveau.tableauBulles) {
         afficherObjet(bulle);
     }
-
 }
 
 function afficherToutesLesFleches() {
@@ -347,18 +337,15 @@ function afficherToutesLesFleches() {
 }
 
 
-
 function afficherObstacles() {
     for (obstacle of partie.niveau.tableauObstacles) {
         afficherObjet(obstacle);
     }
 }
 
-
 function afficherJoueur() {
     afficherObjet(partie.joueur);
 }
-
 
 
 function afficherObjet(objetJeu) {
@@ -406,8 +393,20 @@ function creerDomElementObjeJeu(objetJeu) {
         }
     }
     else if (Joueur.prototype.isPrototypeOf(objetJeu)) {
+
+        var ratioJoueur = objetJeu.tailleY / objetJeu.tailleX;
+        //Player Div must allways appears square :
+        if (ratioJoueur != ratio) {
+            objetJeu.setTailleX(objetJeu.tailleX * (ratioJoueur / ratio));
+        }
+
         elementObjetJeu.style.height = objetJeu.tailleY + "%";
         elementObjetJeu.style.width = objetJeu.tailleX + "%";
+        //modify background image :
+        if (keyDownRightLeft.ArrowLeft)
+            elementObjetJeu.style.backgroundImage = "url('images/player_left.png')";
+        else
+            elementObjetJeu.style.backgroundImage = "url('images/player-right.png')";
     }
 
     else if (Obstacle.prototype.isPrototypeOf(objetJeu)) {

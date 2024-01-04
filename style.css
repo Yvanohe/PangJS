@@ -289,6 +289,7 @@ body {
 
 
 .Joueur {
-
-    background-color: green;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
