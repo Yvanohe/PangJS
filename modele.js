@@ -197,7 +197,7 @@ class Fleche extends ObjetJeu {
     direction;
 
     constructor(positionX, positionY, vitesse, direction) {
-        super(positionX, positionY, 0.5, 10);
+        super(positionX, positionY, 1.1, 10);
         this.vitesse = vitesse;
         this.direction = direction
     }

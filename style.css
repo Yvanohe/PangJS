@@ -283,7 +283,13 @@ body {
 }
 
 .Fleche {
-    background-color: black;
+    /* background-color: black; */
+    background-image: url('./images/arrow.png');
+    background-size: contain;
+    background-position: center;
+
+
+
 }
 
 
@@ -292,5 +298,6 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+
 
 }
