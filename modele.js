@@ -144,6 +144,8 @@ class BulleRouge extends Bulle {
 class Joueur extends ObjetJeu {
     pointDeVie;
     vitesse;
+    invincible = false;
+    opacity = 1;
 
 
     constructor(positionX, positionY, pointDeVie) {
@@ -162,8 +164,30 @@ class Joueur extends ObjetJeu {
     }
 
     estBlesse() {
-        this.pointDeVie--;
+        if (!this.invincible) {
+            this.pointDeVie--;
+        }
+
     }
+
+    makePlayerInvincible() {
+        this.invincible = true;
+
+    }
+
+    cancelPlayerinvincibility() {
+        this.invincible = false;
+
+    }
+
+    makePlayerTransparent() {
+        this.opacity = 0.5;
+    }
+
+    makePlayerOpaque() {
+        this.opacity = 1;
+    }
+
 }
 //----------------------------------------------------------------------------------------------------------------------------------
 

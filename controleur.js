@@ -4,6 +4,7 @@ var intervalDeplacementObjetsAutonomes;
 var intervalDisplatAllObjects;
 var intervalMovePlayer;
 var timer;
+var timerOpacity;
 var partie;
 //startTimer();
 
@@ -217,8 +218,7 @@ function checkCollision() {
         //Player left and right limits :
         if (isCollisionWithBubble(bulle, partie.joueur.positionX, partie.joueur.positionX, partie.joueur.tailleY, 0, 0, partie.joueur.tailleY, 0) || isCollisionWithBubble(bulle, partie.joueur.positionX + partie.joueur.tailleX, partie.joueur.positionX + partie.joueur.tailleX, partie.joueur.tailleY, 0, 0, partie.joueur.tailleY, 0)) {
             bulle.rebondi(0);
-            partie.joueur.estBlesse();
-            hidePlayerLives();
+            hurtPlayer(partie.joueur);
             if (partie.joueur.pointDeVie == 0) {
                 endRound();
                 showResults("VOUS AVEZ PERDU ! VIES EPUISEES !")
@@ -227,8 +227,7 @@ function checkCollision() {
         //collision player upper limit :
         if (isCollisionWithBubble(bulle, partie.joueur.positionX, partie.joueur.positionX + partie.joueur.tailleX, partie.joueur.positionY, 0, 0, partie.joueur.tailleY, 90)) {
             bulle.rebondi(90);
-            partie.joueur.estBlesse();
-            hidePlayerLives();
+            hurtPlayer(partie.joueur);
 
             if (partie.joueur.pointDeVie == 0) {
                 endRound();
@@ -307,6 +306,31 @@ function checkCollision() {
         }
     }
 }
+
+function hurtPlayer(player) {
+    player.estBlesse();
+    if (!player.invincible) {
+        hidePlayerLives();
+        player.makePlayerInvincible();
+        timerOpacity = setInterval(() => changePlayerOpacity(player), 200);
+        setTimeout(() => cancelPlayerinvincibility(player), 2000);
+    }
+
+}
+
+function changePlayerOpacity(player) {
+    if (player.opacity == 1)
+        player.makePlayerTransparent();
+    else
+        player.makePlayerOpaque();
+}
+
+function cancelPlayerinvincibility(player) {
+    player.cancelPlayerinvincibility();
+    clearInterval(timerOpacity);
+}
+
+
 
 // MANIPULATION DU DOM -----------------------------------------------------------------------------------------
 function displayALL() {
@@ -407,6 +431,9 @@ function creerDomElementObjeJeu(objetJeu) {
             elementObjetJeu.style.backgroundImage = "url('images/player_left.png')";
         else
             elementObjetJeu.style.backgroundImage = "url('images/player-right.png')";
+
+        //Player opacity :
+        elementObjetJeu.style.opacity = objetJeu.opacity;
     }
 
     else if (Obstacle.prototype.isPrototypeOf(objetJeu)) {
