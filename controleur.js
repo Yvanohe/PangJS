@@ -1,3 +1,8 @@
+const TEXT_TIMEFINISH = "PERDU, TEMPS ECOULE !";
+const TEXT_NOMORELIVES = "VOUS AVEZ PERDU ! VIES EPUISEES !";
+
+
+
 var aireDeJeu = document.getElementById("aireJeu");
 var gamePaused = false;
 var intervalDeplacementObjetsAutonomes;
@@ -6,7 +11,9 @@ var intervalMovePlayer;
 var timer;
 var timerOpacity;
 var partie;
-//startTimer();
+var music = new Audio('./sons/music.mp3');
+music.volume = 0.8;
+music.loop = true;
 
 
 
@@ -37,7 +44,7 @@ document.addEventListener("keydown", joueurTire);
 
 function startGame() {
     pauseGame();
-    partie = new Partie(3);
+    partie = new Partie(1);
     removeGameElementsfromPlayArea();
     hideResults();
     partie.commencerPartie();
@@ -46,6 +53,7 @@ function startGame() {
     updateLevelText();
     updateDOMTimer();
     resumeGame();
+    //music.play();
 
 }
 
@@ -56,6 +64,7 @@ function pauseGame() {
         clearInterval(intervalDeplacementObjetsAutonomes);
         clearInterval(intervalDisplatAllObjects);
         clearInterval(intervalMovePlayer);
+        music.pause();
 
     }
 }
@@ -67,6 +76,7 @@ function resumeGame() {
         intervalDisplatAllObjects = setInterval(displayAllMovingObjects, 10);
         intervalMovePlayer = setInterval(deplacementJoueur, 20);
         startTimer();
+        music.play();
     }
 }
 //--------------------------------------------------------------------
@@ -83,6 +93,8 @@ function endRound() {
         clearInterval(intervalDeplacementObjetsAutonomes);
         clearInterval(intervalDisplatAllObjects);
         clearInterval(intervalMovePlayer);
+        music.pause();
+        music.currentTime = 0;
     } else {
         removeGameElementsfromPlayArea();
         partie.terminerPartie();
@@ -99,7 +111,7 @@ function resetOrEndTimer() {
     if (partie.niveau.tableauBulles.length = !0) {
         partie.joueur.pointDeVie = 0;
         endRound();
-        showResults("PERDU, TEMPS ECOULE !")
+        showResults(TEXT_TIMEFINISH);
     } else {
         endRound();
         startTimer();
@@ -168,6 +180,9 @@ function joueurTire(event) {
             detruireFleche(fleche);
         }
         partie.tableauFleche.push(partie.joueur.tire());
+        let arrowSong = new Audio('./sons/arrow.mp3');
+        arrowSong.volume = 0.5;
+        arrowSong.play();
     }
 }
 
@@ -175,6 +190,8 @@ function joueurTire(event) {
 function eclatementBulle(bulle) {
     removeElementObjetJeuFromDOM(bulle);
     sousBulles = bulle.eclate();
+    let bubbleburst = new Audio('./sons/bubble.mp3');
+    bubbleburst.play();
     if (sousBulles.length != 0) {
         partie.niveau.tableauBulles.push(sousBulles[0]);
         partie.niveau.tableauBulles.push(sousBulles[1]);
@@ -219,7 +236,7 @@ function checkCollision() {
             hurtPlayer(partie.joueur);
             if (partie.joueur.pointDeVie == 0) {
                 endRound();
-                showResults("VOUS AVEZ PERDU ! VIES EPUISEES !")
+                showResults(TEXT_NOMORELIVES);
             }
         }
         //collision player upper limit :
@@ -229,27 +246,16 @@ function checkCollision() {
 
             if (partie.joueur.pointDeVie == 0) {
                 endRound();
-                showResults("VOUS AVEZ PERDU ! VIES EPUISEES !")
+                showResults(TEXT_NOMORELIVES);
             }
         }
-
-
-
     }
 
-    //Collision entre fleche et obstacle :
+    //Collision between arrow and obstacle (destroying the arrow if collision) :
     for (obstacle of partie.niveau.tableauObstacles) {
         for (fleche of partie.tableauFleche) {
             if (!obstacle.bordure) {
-                console.log("POSITION Y FLECHE = " + fleche.positionY);
-                console.log("POSITION X FLECHE = " + fleche.positionX);
-                console.log(" a obstacle : " + obstacle.a);
-                console.log(" b obstacle : " + obstacle.b);
-                console.log("equation droit obstacle = " + (obstacle.a * fleche.positionX + obstacle.b));
-                console.log("OBSTACLE X END : " + obstacle.positionXend)
-
                 if ((fleche.positionY >= obstacle.a * fleche.positionX + obstacle.b - 0.5 && fleche.positionY <= obstacle.a * fleche.positionX + obstacle.b + 0.5) && (fleche.positionX >= obstacle.positionX && fleche.positionX < obstacle.positionXend)) {
-                    console.log("destruction FLECHE")
                     detruireFleche(fleche);
                 }
             }
@@ -327,8 +333,13 @@ function isCollisionWithBubble(bulle, obstaclePositionX, obstacleEndingX, obstac
 }
 
 function hurtPlayer(player) {
+
     player.estBlesse();
     if (!player.invincible) {
+        //play song
+        let cri = new Audio('./sons/hurt.mp3');
+        cri.play();
+
         hidePlayerLives();
         player.makePlayerInvincible();
         timerOpacity = setInterval(() => changePlayerOpacity(player), 200);

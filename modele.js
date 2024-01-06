@@ -365,25 +365,35 @@ class Level {
                 let couleur = "black";
 
                 //obstacles :
-                let obstacle1 = new Obstacle(73, 48.5, 20, 0, 90);
+                //let obstacle1 = new Obstacle(73, 48.5, 20, 0, 90);
+                let obstacle1 = new Obstacle(18, 48.5, 18, 0, 90);
                 obstacle1.couleur = couleur;
                 this.tableauObstacles.push(obstacle1);
 
-                for (var obstacle of this.generateRectangleObstacle(69, 19.5, 30, 6.25)) {
+                for (var obstacle of this.generateRectangleObstacle(9, 34, 36, 7)) {
                     obstacle.couleur = couleur;
                     this.tableauObstacles.push(obstacle);
                 }
 
                 break;
             case 2:
-                for (var obstacle of this.generateRectangleObstacle(35, 47, 30, 5)) {
+                for (var obstacle of this.generateRectangleObstacle(32, 31, 45, 4)) {
                     this.tableauObstacles.push(obstacle);
                 }
                 break;
 
             case 3:
-                let limiteBus = new Obstacle(19, 46.5, 45, 0, 80);
-                this.tableauObstacles.push(limiteBus);
+
+                let limiteBus1 = new Obstacle(38, 69, 28, 0, 112);
+                let limiteBus2 = new Obstacle(39, 45, 26, 0, 99.5);
+                let limiteBus3 = new Obstacle(45, 20, 12.5, 0, 87);
+                limiteBus1.couleur = "black";
+                limiteBus2.couleur = "black";
+                limiteBus3.couleur = "black";
+
+                this.tableauObstacles.push(limiteBus1);
+                this.tableauObstacles.push(limiteBus2);
+                this.tableauObstacles.push(limiteBus3);
                 break;
         }
     }
@@ -399,13 +409,13 @@ class Level {
                 // let positionX = Math.floor(Math.random() * (100 - 2 * bulle1.tailleX)) + bulle1.tailleX;
                 // let positionY = Math.floor(Math.random() * (100 - 2 * bulle1.tailleY)) + bulle1.tailleY;
                 let positionX = getRandomIntegerInInterval(bulle1.tailleX, 100 - bulle1.tailleX);
-                let positionY = getRandomIntegerInInterval(bulle1.tailleY, 100 - bulle1.tailleY);
+                let positionY = getRandomIntegerInInterval(bulle1.tailleY + 48, 100 - bulle1.tailleY);
                 bulle1.seDeplace(positionX, positionY);
                 this.tableauBulles.push(bulle1);
                 break;
 
             case 2:
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < 2; i++) {
                     //let direction = Math.floor(Math.random() * (225 - 135)) + 135;
                     let direction = getRandomIntegerInInterval(135, 225);
                     var bulle1 = new BulleBleue(0, 0, direction);

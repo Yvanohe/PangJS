@@ -56,7 +56,7 @@ body {
 #aireJeu {
     position: relative;
     background-size: 100% 100%;
-    background-image: url('backgrounds/arcade_background.jpg');
+    background-image: url('backgrounds/start_background.png');
 
     margin-top: 1%;
     display: flex;
@@ -105,21 +105,48 @@ body {
     padding: 5%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     background-image: url('backgrounds/bricks.png');
     background-repeat: repeat;
+    flex-wrap: nowrap;
 
-    gap: 10%;
     color: white;
 }
 
 
+
 #statsJeu p {
     font-weight: 700;
-    padding: 5%;
     font-size: 5em;
+    padding: 0;
+    margin: 0;
 
+}
+
+.instructions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+.instructions img {
+    width: 75px;
+    height: 75px;
+}
+
+#spacebar {
+    width: 200px;
+    height: 75px;
+}
+
+.instructions p {
+    font-size: 2em !important;
+
+    padding: 0;
+    margin: 0;
 }
 
 
@@ -151,6 +178,20 @@ body {
 
     #menu_principal img {
         width: 150px;
+    }
+
+    .instructions img {
+        width: 50px;
+        height: 50px;
+    }
+
+    #spacebar {
+        width: 100px;
+        height: 50px;
+    }
+
+    .instructions p {
+        font-size: 1em;
     }
 
 
@@ -214,9 +255,22 @@ body {
 
     #statsJeu p {
         font-size: 1em;
-
-
     }
+
+    .instructions img {
+        width: 15px;
+        height: 15px;
+    }
+
+    #spacebar {
+        width: 30px;
+        height: 15px;
+    }
+
+    .instructions p {
+        font-size: 0.5em;
+    }
+
 
 
 }
