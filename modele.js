@@ -229,8 +229,8 @@ class Obstacle extends ObjetJeu {
             this.orientation = orientation;
 
             if (modulo(orientation, 180) != 0 && modulo(orientation, 180) != 180) {
-                //this.a = Math.tan(modulo((orientation - 90), 180) * 3.14159 / 180);
-                this.a = Math.tan(modulo((90 - orientation), 180) * 3.14159 / 180);
+                this.a = Math.tan(modulo((orientation), 180) * 3.14159 / 180);
+                //this.a = Math.tan(modulo((90 - orientation), 180) * 3.14159 / 180);
                 this.b = this.positionY - this.a * (this.positionX);
             } else {
                 this.a = 0; // ne sera pas utilisé
@@ -244,6 +244,23 @@ class Obstacle extends ObjetJeu {
         console.log("a1 : " + a1);
         this.a = a1 * ratio;
         this.b = this.positionY - this.a * (this.positionX);
+        this.calculateEndingCoordinate();
+    }
+
+    calculateEndingCoordinate() {
+        //Détermination des coordonnées finales du segment :
+        let A = 1 + this.a * this.a;
+        let B = this.positionX * (-2 - 2 * this.a * this.a);
+        let C = this.positionX * this.positionX * (1 + this.a * this.a) - this.tailleX * this.tailleX;
+        let delta = B * B - 4 * A * C;
+        let x11 = (-B - Math.sqrt(delta)) / (2 * A);
+        let x12 = (-B + Math.sqrt(delta)) / (2 * A);
+
+
+        let x1 = Math.max(x11, x12);
+        let y1 = this.a * x1 + this.b
+        this.positionXend = x1;
+        this.positionYend = y1;
     }
 }
 //--------------------------------------------------------------------------------------------------------------------------
@@ -312,6 +329,11 @@ class Level {
                 this.backgroundImage = "level2-Rome.png"
                 this.time = 60 * 1000;
                 break;
+
+            case 3:
+                this.backgroundImage = "level3-London.png"
+                this.time = 60 * 1000;
+                break;
         }
     }
 
@@ -358,6 +380,11 @@ class Level {
                     this.tableauObstacles.push(obstacle);
                 }
                 break;
+
+            case 3:
+                let limiteBus = new Obstacle(19, 46.5, 45, 0, 80);
+                this.tableauObstacles.push(limiteBus);
+                break;
         }
     }
 
@@ -390,6 +417,20 @@ class Level {
                     this.tableauBulles.push(bulle1);
                 }
                 break;
+
+            case 3:
+                for (let i = 0; i < 3; i++) {
+                    //let direction = Math.floor(Math.random() * (225 - 135)) + 135;
+                    let direction = getRandomIntegerInInterval(135, 225);
+                    var bulle1 = new BulleBleue(0, 0, direction);
+                    // let positionX = Math.floor(Math.random() * (100 - 2 * bulle1.tailleX)) + bulle1.tailleX;
+                    // let positionY = Math.floor(Math.random() * (100 - 2 * bulle1.tailleY - 53)) + bulle1.tailleY + 53;
+                    let positionX = getRandomIntegerInInterval(bulle1.tailleX, 100 - bulle1.tailleX);
+                    let positionY = getRandomIntegerInInterval(bulle1.tailleY + 53, 100 - bulle1.tailleY);
+                    bulle1.seDeplace(positionX, positionY);
+                    this.tableauBulles.push(bulle1);
+                }
+                break;
         }
     }
 
@@ -400,9 +441,9 @@ class Level {
         //horizontal bas du rectangle
         obstacles.push(new Obstacle(X, Y - height, width, 0, 90));
         //verticale gauche du rectangle
-        obstacles.push(new Obstacle(X, Y, height, 0, 0 + 0));
+        obstacles.push(new Obstacle(X, Y, height, 0, 180));
         //verticale droite du rectangle
-        obstacles.push(new Obstacle(X + width, Y, height, 0, 0));
+        obstacles.push(new Obstacle(X + width, Y, height, 0, 180));
 
         return obstacles;
     }
