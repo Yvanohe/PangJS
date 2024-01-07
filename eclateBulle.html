@@ -12,13 +12,17 @@
 <body>
     <div class="conteneur">
         <div id="menu_principal">
-            <div>
+            <div id="gameControleur">
                 <img src="images/start_Button.png" alt="start button" class="button" id="startButton"
                     onclick="startGame()">
                 <img src="images/pause_Button.png" alt="pause button" class="button" id="pauseButton"
                     onclick="pauseGame()">
                 <img src="images/resume_Button.png" alt="pause button" class="button" id="resume_Button"
                     onclick="resumeGame()">
+            </div>
+            <div id="musicControl">
+                <img src="images/haut-parleur-audio-active.png" alt="music On" class="button" id="musicIcon"
+                    onclick="pauseOrResumeMusic()">
             </div>
         </div>
         <div id="aireJeu">
@@ -50,7 +54,9 @@
     </div>
 </body>
 
+<script src="tools.js"></script>
 <script src="modele.js"></script>
-<script src="controleur.js"></script>
+<script src="domControl.js"></script>
+<script src="gameControl.js"></script>
 
 </html>

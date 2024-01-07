@@ -26,21 +26,6 @@ class ObjetJeu {
     }
 }
 
-/*//Déclaration classe javascript syntaxe de base :
-// var ObjetJeu = function (positionX, positionY) {
-//     this.positionX = positionX;
-//     this.positionY = positionY;
-//     this.id = Math.random();
-
-// }
-
-// ObjetJeu.prototype.seDeplace = function (deltaX, deltaY) {
-
-// }
-
-//------------------------*/
-
-
 
 // OBJETS BULLES -------------------------------------------------------------------------------------------------------------
 class Bulle extends ObjetJeu {
@@ -204,17 +189,17 @@ class Fleche extends ObjetJeu {
 }
 //---------------------------------------------------------------------------------------------------------------------------------
 
-//OBJET OBSTACLE------------------------------------------------------------------------------------------------------------------
+//OBSTACLE OBJECT------------------------------------------------------------------------------------------------------------------
 
 class Obstacle extends ObjetJeu {
     orientation;
     bordure = false;
-    couleur = "red";
-    //parametre de l'équation représentant la droite :
+    couleur = "red"; //default colour
+
+    //line equation parameters (y = ax + b):
     //---------------------------
     a;
     b;
-    // equation : y = ax + b
     //----------------------------
     positionXend;
     positionYend;
@@ -230,25 +215,24 @@ class Obstacle extends ObjetJeu {
 
             if (modulo(orientation, 180) != 0 && modulo(orientation, 180) != 180) {
                 this.a = Math.tan(modulo((orientation), 180) * 3.14159 / 180);
-                //this.a = Math.tan(modulo((90 - orientation), 180) * 3.14159 / 180);
                 this.b = this.positionY - this.a * (this.positionX);
             } else {
-                this.a = 0; // ne sera pas utilisé
-                this.b = 0; // ne sera pas utilisé
+                this.a = 0; // not used
+                this.b = 0; // not used
             }
         }
+        this.calculateEndingCoordinate();
     }
 
     correctABWithRatio(ratio) {
         let a1 = Math.tan(modulo((90 - this.orientation), 180) * 3.14159 / 180);
-        console.log("a1 : " + a1);
         this.a = a1 * ratio;
         this.b = this.positionY - this.a * (this.positionX);
         this.calculateEndingCoordinate();
     }
 
     calculateEndingCoordinate() {
-        //Détermination des coordonnées finales du segment :
+        //Determining the final coordinates of the segment :
         let A = 1 + this.a * this.a;
         let B = this.positionX * (-2 - 2 * this.a * this.a);
         let C = this.positionX * this.positionX * (1 + this.a * this.a) - this.tailleX * this.tailleX;
@@ -267,35 +251,32 @@ class Obstacle extends ObjetJeu {
 
 
 // OBJET PARTIE-----------------------------------------------------------------------------------------------------------------
-class Partie {
-
-    joueur;
-    tableauFleche = [];
-
+class Game {
+    player;
+    arrows = [];
     score;
-
-    niveau;
+    level;
 
     constructor(niveau) {
 
 
-        this.niveau = new Level(niveau);
-        this.joueur = new Joueur(50, 0, 3);
+        this.level = new Level(niveau);
+        this.player = new Joueur(50, 0, 3);
     }
 
-    commencerPartie() {
+    startGame() {
 
-        this.niveau.generateLevel();
+        this.level.generateLevel();
     }
 
-    terminerPartie() {
-        if (partie.joueur.pointDeVie == 0) {
-            this.niveau.level = 1;
-            this.commencerPartie();
+    endGame() {
+        if (game.joueur.pointDeVie == 0) {
+            this.level.levelnumber = 1;
+            this.startGame();
 
         } else {
-            this.niveau.level++;
-            this.commencerPartie();
+            this.level.levelnumber++;
+            this.startGame();
         }
     }
 
@@ -306,21 +287,21 @@ class Partie {
 // OBJET LEVEL---------------------------------------------------------------------------------------------------------------------
 //Classe décrivant les différents niveau (obstacle et bulle par niveau)
 class Level {
-    level;
-    tableauBulles;
-    tableauObstacles;
+    levelnumber;
+    bubbles;
+    obstacles;
     backgroundImage;
     time;
 
     constructor(level) {
-        this.level = level;
+        this.levelnumber = level;
         this.generateLevel();
     }
 
     generateLevel() {
-        this.generateObstacle();
-        this.generateBulles();
-        switch (this.level) {
+        this.addObstacle();
+        this.addBulles();
+        switch (this.levelnumber) {
             case 1:
                 this.backgroundImage = "level1-Paris.png";
                 this.time = 30 * 1000;
@@ -334,114 +315,155 @@ class Level {
                 this.backgroundImage = "level3-London.png"
                 this.time = 60 * 1000;
                 break;
+
+            case 4:
+                this.backgroundImage = "level4-Athena.png"
+                this.time = 60 * 1000;
+                break;
+            case 5:
+                this.backgroundImage = "level5-NorvegianFjord.png"
+                this.time = 60 * 1000;
+                break;
         }
     }
 
     //méthode générant les obstacles suivant le niveau. C'est ainsi ici qu'(est décrit l'architecture de chaque niveau)
-    generateObstacle() {
-        this.tableauObstacles = [];
+    addObstacle() {
+        this.obstacles = [];
         //Dans tous les niveaux : cadre de l'aire de jeu :
         //limite verticale gauche  (X =0, Y = 100, orientation =  180°):
         let limiteVerticaleGauche = new Obstacle(0, 100, 99.9, 0, 180)
         limiteVerticaleGauche.bordure = true;
-        this.tableauObstacles.push(limiteVerticaleGauche);
+        this.obstacles.push(limiteVerticaleGauche);
         //limite verticale droite  (X =100, Y = 100, orientation =  180°):
         let limiteVerticaleDroite = new Obstacle(100, 100, 99.9, 0, 180);
         limiteVerticaleDroite.bordure = true;
-        this.tableauObstacles.push(limiteVerticaleDroite);
+        this.obstacles.push(limiteVerticaleDroite);
         // //limite horizontale haute  (X =0, Y = 100, tailleX =100, tailleY =0, orientation =  90°):
         let limiteHorizontaleHaute = new Obstacle(0, 99.9, 100, 0, 90);
         limiteHorizontaleHaute.bordure = true;
-        this.tableauObstacles.push(limiteHorizontaleHaute);
+        this.obstacles.push(limiteHorizontaleHaute);
         // //limite horizontale bas  (X =0, Y = 0, tailleX =100, tailleY =0, orientation =  90°):
         let limiteHorizontaleBasse = new Obstacle(0, 0.2, 100, 0, 90);
         limiteHorizontaleBasse.bordure = true;
-        this.tableauObstacles.push(limiteHorizontaleBasse);
+        this.obstacles.push(limiteHorizontaleBasse);
 
         //obstacles supplémentaire en fonction du niveau :
-        switch (this.level) {
+        switch (this.levelnumber) {
             case 1:
-                //couleur :
-                let couleur = "black";
-
                 //obstacles :
                 //let obstacle1 = new Obstacle(73, 48.5, 20, 0, 90);
                 let obstacle1 = new Obstacle(18, 48.5, 18, 0, 90);
-                obstacle1.couleur = couleur;
-                this.tableauObstacles.push(obstacle1);
+                obstacle1.couleur = "black";
+                this.obstacles.push(obstacle1);
 
                 for (var obstacle of this.generateRectangleObstacle(9, 34, 36, 7)) {
-                    obstacle.couleur = couleur;
-                    this.tableauObstacles.push(obstacle);
+                    obstacle.couleur = "black";
+                    this.obstacles.push(obstacle);
                 }
-
                 break;
             case 2:
                 for (var obstacle of this.generateRectangleObstacle(32, 31, 45, 4)) {
-                    this.tableauObstacles.push(obstacle);
+                    obstacle.couleur = "black";
+                    this.obstacles.push(obstacle);
                 }
                 break;
 
             case 3:
-
                 let limiteBus1 = new Obstacle(38, 69, 28, 0, 112);
                 let limiteBus2 = new Obstacle(39, 45, 26, 0, 99.5);
                 let limiteBus3 = new Obstacle(45, 20, 12.5, 0, 87);
-                limiteBus1.couleur = "black";
-                limiteBus2.couleur = "black";
-                limiteBus3.couleur = "black";
 
-                this.tableauObstacles.push(limiteBus1);
-                this.tableauObstacles.push(limiteBus2);
-                this.tableauObstacles.push(limiteBus3);
+                this.obstacles.push(limiteBus1);
+                this.obstacles.push(limiteBus2);
+                this.obstacles.push(limiteBus3);
                 break;
+
+            case 4:
+                for (var obstacle of this.generateRectangleObstacle(13, 77, 62, 7)) {
+                    obstacle.couleur = "bisque";
+                    this.obstacles.push(obstacle);
+                }
+                break;
+
+            case 5:
+                let pente1 = new Obstacle(55, 42, 15, 0, 55);
+                pente1.couleur = "green";
+                let vertical1 = new Obstacle(66.5, 76, 21, 0, 180);
+                vertical1.couleur = "green";
+
+
+
+                let pente2 = new Obstacle(13, 90, 32, 0, 155);
+                pente2.couleur = "green";
+                let pente3 = new Obstacle(23, 57, 24, 0, 118);
+                pente3.couleur = "green";
+                // let pente3 = new Obstacle(55, 42, 15, 0, 55);
+                // pente1.couleur = "green";
+
+
+                this.obstacles.push(pente1);
+                this.obstacles.push(vertical1);
+                this.obstacles.push(pente2);
+                this.obstacles.push(pente3);
+
+                break;
+
         }
     }
 
-    generateBulles() {
-        this.tableauBulles = [];
+    addBulles() {
+        this.bubbles = [];
 
-        switch (this.level) {
+        switch (this.levelnumber) {
+            default:
+                // only 1 blue bubble
+                for (let bubble of this.generateBubbles("blue", 1, 0, 100, 48, 100, 135, 225)) {
+                    this.bubbles.push(bubble);
+                }
+                break;
+
             case 1:
-                //let direction = Math.floor(Math.random() * (225 - 135)) + 135;
-                let direction = getRandomIntegerInInterval(135, 225);
-                var bulle1 = new BulleBleue(0, 0, direction);
-                // let positionX = Math.floor(Math.random() * (100 - 2 * bulle1.tailleX)) + bulle1.tailleX;
-                // let positionY = Math.floor(Math.random() * (100 - 2 * bulle1.tailleY)) + bulle1.tailleY;
-                let positionX = getRandomIntegerInInterval(bulle1.tailleX, 100 - bulle1.tailleX);
-                let positionY = getRandomIntegerInInterval(bulle1.tailleY + 48, 100 - bulle1.tailleY);
-                bulle1.seDeplace(positionX, positionY);
-                this.tableauBulles.push(bulle1);
+                // only 1 blue bubble
+                for (let bubble of this.generateBubbles("blue", 1, 0, 100, 48, 100, 135, 225)) {
+                    this.bubbles.push(bubble);
+                }
+
                 break;
 
             case 2:
-                for (let i = 0; i < 2; i++) {
-                    //let direction = Math.floor(Math.random() * (225 - 135)) + 135;
-                    let direction = getRandomIntegerInInterval(135, 225);
-                    var bulle1 = new BulleBleue(0, 0, direction);
-                    // let positionX = Math.floor(Math.random() * (100 - 2 * bulle1.tailleX)) + bulle1.tailleX;
-                    // let positionY = Math.floor(Math.random() * (100 - 2 * bulle1.tailleY - 53)) + bulle1.tailleY + 53;
-                    let positionX = getRandomIntegerInInterval(bulle1.tailleX, 100 - bulle1.tailleX);
-                    let positionY = getRandomIntegerInInterval(bulle1.tailleY + 53, 100 - bulle1.tailleY);
-                    bulle1.seDeplace(positionX, positionY);
-                    this.tableauBulles.push(bulle1);
+                for (let bubble of this.generateBubbles("blue", 2, 0, 100, 53, 100, 135, 225)) {
+                    this.bubbles.push(bubble);
                 }
+
                 break;
 
             case 3:
-                for (let i = 0; i < 3; i++) {
-                    //let direction = Math.floor(Math.random() * (225 - 135)) + 135;
-                    let direction = getRandomIntegerInInterval(135, 225);
-                    var bulle1 = new BulleBleue(0, 0, direction);
-                    // let positionX = Math.floor(Math.random() * (100 - 2 * bulle1.tailleX)) + bulle1.tailleX;
-                    // let positionY = Math.floor(Math.random() * (100 - 2 * bulle1.tailleY - 53)) + bulle1.tailleY + 53;
-                    let positionX = getRandomIntegerInInterval(bulle1.tailleX, 100 - bulle1.tailleX);
-                    let positionY = getRandomIntegerInInterval(bulle1.tailleY + 53, 100 - bulle1.tailleY);
-                    bulle1.seDeplace(positionX, positionY);
-                    this.tableauBulles.push(bulle1);
+                for (let bubble of this.generateBubbles("blue", 3, 0, 100, 53, 100, 135, 225)) {
+                    this.bubbles.push(bubble);
+                }
+
+                break;
+
+            case 4:
+                for (let bubble of this.generateBubbles("blue", 3, 0, 100, 15, 75, 135, 225)) {
+                    this.bubbles.push(bubble);
+                }
+                for (let bubble of this.generateBubbles("green", 1, 13, 75, 77, 100, 110, 165)) {
+                    this.bubbles.push(bubble);
                 }
                 break;
+
+            case 5:
+
+                for (let bubble of this.generateBubbles("green", 8, 13, 66, 48, 100, 135, 225)) {
+                    this.bubbles.push(bubble);
+                }
+                break;
+
+
         }
+
     }
 
     generateRectangleObstacle(X, Y, width, height) {
@@ -457,17 +479,41 @@ class Level {
 
         return obstacles;
     }
+
+    generateBubbles(typeofBubble, numberOfBubble, minXPosition, maxXPosition, minYPosition, maxYPosition, minStartingDirection, maxStartingDirection) {
+        var generatedBubbles = [];
+        if (minXPosition >= 0 && maxXPosition <= 100 && minYPosition >= 0 && minYPosition <= 100 && minStartingDirection >= 0 && maxStartingDirection <= 360) {
+            for (let i = 0; i < numberOfBubble; i++) {
+                // random direction between chosen min and max direction
+                let direction = getRandomIntegerInInterval(minStartingDirection, maxStartingDirection);
+
+                //Isntance of a bubble depending on choosen type :
+                switch (typeofBubble) {
+                    case "blue":
+                        var bulle = new BulleBleue(0, 0, direction);
+                        break;
+                    case "green":
+                        var bulle = new BulleVerte(0, 0, direction);
+                        break;
+                    case "red":
+                        var bulle = new BulleRouge(0, 0, direction);
+                        break;
+                    default:
+                        var bulle = new BulleBleue(0, 0, direction);
+                        break;
+                }
+
+                let positionX = getRandomIntegerInInterval(bulle.tailleX + minXPosition, maxXPosition - bulle.tailleX);
+                let positionY = getRandomIntegerInInterval(bulle.tailleY + minYPosition, maxYPosition - bulle.tailleY);
+                bulle.seDeplace(positionX, positionY);
+                generatedBubbles.push(bulle);
+            }
+        } else {
+            console.log("bubble direction or position not coherent; no bubles created");
+        }
+        return generatedBubbles;
+    }
 }
 //----------------------------------------------------------------------------------------------------------------------------------
 
 
-function getRandomIntegerInInterval(min, max) {
-    let r = Math.floor(Math.random() * (max - min)) + min;
-    return r;
-}
-
-
-
-function modulo(number, modulo) {
-    return ((number % modulo) + modulo) % modulo;
-}

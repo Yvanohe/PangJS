@@ -1,2 +1,0 @@
-- faire plus de niveaux
-- organiser les fichiers en modele, gameControl, domControl.
