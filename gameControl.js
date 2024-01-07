@@ -107,7 +107,7 @@ function pauseOrResumeMusic() {
 
 function endRound() {
     if (game.player.pointDeVie == 0) {
-        game.terminerPartie();
+        game.endGame();
         clearInterval(levelTimer);
         clearInterval(globalTimer);
         clearInterval(intervalDeplacementObjetsAutonomes);
@@ -118,7 +118,7 @@ function endRound() {
     } else {
         if (game.level.levelnumber != 5) {
             removeGameElementsfromPlayArea();
-            game.terminerPartie();
+            game.endGame();
             displayALL();
         } else {
             clearInterval(levelTimer);
