@@ -270,7 +270,7 @@ class Game {
     }
 
     endGame() {
-        if (game.joueur.pointDeVie == 0) {
+        if (this.player.pointDeVie == 0) {
             this.level.levelnumber = 1;
             this.startGame();
 
