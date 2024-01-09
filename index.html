@@ -12,22 +12,23 @@
 <body>
     <div class="conteneur">
         <div id="menu_principal">
-            <div id="gameControleur">
-                <img src="images/start_Button.png" alt="start button" class="button" id="startButton"
+            <div class="gameControleurs">
+                <img src="images/start_Button.png" alt="start button" class="gameControleurs__button" id="startButton"
                     onclick="startGame()">
-                <img src="images/pause_Button.png" alt="pause button" class="button" id="pauseButton"
+                <img src="images/pause_Button.png" alt="pause button" class="gameControleurs__button" id="pauseButton"
                     onclick="pauseGame()">
-                <img src="images/resume_Button.png" alt="pause button" class="button" id="resume_Button"
-                    onclick="resumeGame()">
+                <img src="images/resume_Button.png" alt="pause button" class="gameControleurs__button"
+                    id="resume_Button" onclick="resumeGame()">
+                <img src="images/haut-parleur-audio-active.png" alt="music On"
+                    class="gameControleurs__button gameControleurs__button--small" id="musicIcon"
+                    onclick="pauseOrResumeMusic()">
             </div>
             <div id="musicControl">
-                <img src="images/haut-parleur-audio-active.png" alt="music On" class="button" id="musicIcon"
-                    onclick="pauseOrResumeMusic()">
+
             </div>
         </div>
         <div id="aireJeu">
             <div id="divTextResult">
-
                 <p id="textresult"></p>
             </div>
         </div>
@@ -41,15 +42,17 @@
             <p id="level"></p>
 
             <div class="instructions">
-                <div><img src="./images/left_key.png" alt="left key"></div>
-                <div><img src="./images/right_key.png" alt="right key"></div>
-                <p>Move left/right</p>
+                <div><img class="instructions__img" src="./images/left_key.png" alt="left key"
+                        onmousedown="mouseDown('left')" onmouseup="mouseUp('left')"></div>
+                <div><img class="instructions__img" src="./images/right_key.png" alt="right key"
+                        onmousedown="mouseDown('right')" onmouseup="mouseUp('right')"></div>
+                <p class="instructions__text">Move left/right</p>
             </div>
             <div class="instructions">
-                <div><img src="./images/space_bar.png" alt="space key" id="spacebar"></div>
-                <p>Shoot !</p>
+                <div><img class="instructions__img" src="./images/space_bar.png" alt="space key" id="spacebar"
+                        onclick="joueurTire()"></div>
+                <p class="instructions__text">Shoot !</p>
             </div>
-
         </div>
     </div>
 </body>

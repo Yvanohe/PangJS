@@ -21,29 +21,7 @@ music.loop = true;
 
 
 
-//-----------------------------------------------------------------------
-//Gestion des événements
-window.onresize = displayALL;
 
-//Tableau pour conserver l'event du déplacement d'un joueur si une autre touche est tapée
-var keyDownRightLeft = { ArrowRight: false, ArrowLeft: false };
-//les eventListeners suivant permettent de gérer le déplacement du joueur par appui continuel sur une touche fleche (gauche/droite) du clavier sans interruption si apui sur une autre touche du clavier (tel que l'espace pour tirer)
-document.addEventListener("keydown", function (event) {
-    if (event.key == 'ArrowRight') {
-        keyDownRightLeft.ArrowRight = true;
-    } else if (event.key == 'ArrowLeft') {
-        keyDownRightLeft.ArrowLeft = true;;
-    }
-});
-
-document.addEventListener("keyup", function (event) {
-    if (event.key == 'ArrowRight') {
-        keyDownRightLeft.ArrowRight = false;
-    } else if (event.key == 'ArrowLeft') {
-        keyDownRightLeft.ArrowLeft = false;
-    }
-});
-document.addEventListener("keydown", joueurTire);
 
 
 function startGame() {
@@ -209,17 +187,16 @@ function deplacementJoueur() {
 }
 
 
-function joueurTire(event) {
-    if (event.key == ' ') {
-        for (fleche of game.arrows) {
-            detruireFleche(fleche);
-        }
-        game.arrows.push(game.player.tire());
-        let arrowSong = new Audio('./sons/arrow.mp3');
-        arrowSong.volume = 0.5;
-        arrowSong.play();
+function joueurTire() {
+    for (fleche of game.arrows) {
+        detruireFleche(fleche);
     }
+    game.arrows.push(game.player.tire());
+    let arrowSong = new Audio('./sons/arrow.mp3');
+    arrowSong.volume = 0.5;
+    arrowSong.play();
 }
+
 
 
 function eclatementBulle(bulle) {

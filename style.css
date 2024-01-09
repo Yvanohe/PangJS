@@ -4,8 +4,6 @@ body {
     background-color: black;
 }
 
-
-
 .conteneur {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
@@ -15,83 +13,108 @@ body {
     height: 100vh;
 }
 
+#coeur {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5%;
+    align-items: center;
+
+}
+
+#coeur img {
+    width: 100%;
+    height: auto;
+    transition-property: width, visibility, transform;
+    transition-duration: 1s;
+    transition-timing-function: linear;
+    visibility: hidden;
+}
+
+
+.BulleBleue,
+.BulleRouge,
+.BulleVerte {
+    border-radius: 50%;
+    box-shadow: 6px 6px 25px rgba(0, 0, 0, 0.5);
+}
+
+.BulleBleue {
+    background: radial-gradient(circle at bottom, #8193f6, #7688ef 20%, #1220e2c2 80%);
+}
+
+.BulleVerte {
+    background: radial-gradient(circle at bottom, #81f687, #84ef76 20%, #05940caf 80%);
+}
+
+.BulleRouge {
+    background: radial-gradient(circle at bottom, #f68181, #ef7676 20%, rgba(139, 9, 5, 0.712) 80%);
+}
+
+.Fleche {
+    background-image: url('./images/arrow.png');
+    background-size: contain;
+    background-position: center;
+}
+
+
+.Joueur {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+
+
 #menu_principal {
     background-color: white;
     padding-top: 5%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-
-
     background-image: url('backgrounds/bricks.png');
     background-repeat: repeat;
-
-
 }
 
-#menu_principal div {
+.gameControleurs {
 
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-around;
-
-    gap: 5%;
     align-items: center;
     align-content: center;
-
+    gap: 20px;
 
 }
 
-#gameControleur {
-    margin-bottom: 100px;
-}
 
-#gameControleur img {
+.gameControleurs__button {
     height: auto;
     max-width: 100%;
-    width: 300px;
 }
 
-
-#gameControleur img:active {
+.gameControleurs__button:active {
     opacity: 75%;
 }
-
-#musicControl img {
-    height: auto;
-    max-width: 100%;
-    width: 75px;
-}
-
-
 
 
 #aireJeu {
     position: relative;
     background-size: 100% 100%;
     background-image: url('backgrounds/start_background.png');
-
     margin-top: 1%;
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
 #aireJeu div {
     position: absolute;
 }
-
-/* 
-#aireJeu div {
-    position: absolute;
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-
-
-} */
 
 #divTextResult {
     border: 4px solid black;
@@ -101,7 +124,6 @@ body {
     background-repeat: repeat;
     visibility: hidden;
     box-shadow: 6px 6px 30px rgba(0, 0, 0);
-
 }
 
 #aireJeu p {
@@ -110,7 +132,6 @@ body {
     font-size: 4em;
     font-weight: 700;
     color: red;
-
     text-shadow: 5px 5px 25px red;
 }
 
@@ -123,7 +144,6 @@ body {
     background-image: url('backgrounds/bricks.png');
     background-repeat: repeat;
     flex-wrap: nowrap;
-
     color: white;
 }
 
@@ -131,7 +151,6 @@ body {
 
 #statsJeu p {
     font-weight: 700;
-    font-size: 5em;
     padding: 0;
     margin: 0;
 
@@ -140,28 +159,90 @@ body {
 .instructions {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
+    gap: 10px;
+}
+
+.instructions__text {
+    text-align: center;
 }
 
 
-.instructions img {
-    width: 75px;
-    height: 75px;
+@media screen and (min-width: 1200px) {
+
+
+    #menu_principal {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 1;
+        grid-row-end: 3;
+    }
+
+    #aireJeu {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 1;
+        grid-row-end: 3;
+        margin-bottom: 1%;
+    }
+
+    #statsJeu {
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 1;
+        grid-row-end: 3;
+    }
+
+    #statsJeu p {
+        font-size: 5em;
+    }
+
+
+    .gameControleurs__button {
+        width: 300px;
+    }
+
+    .gameControleurs__button--small {
+        width: 75px;
+    }
+
+    .instructions__img {
+        width: 100px;
+        height: 75px;
+    }
+
+    #spacebar {
+        width: 300px;
+        height: 50px;
+    }
+
+    .instructions__text {
+        font-size: 2em;
+        text-align: center;
+    }
+
 }
 
-#spacebar {
-    width: 200px;
-    height: 75px;
+@media screen and (max-height : 1000px) {
+    .gameControleurs__button {
+        width: 200px;
+    }
+
+    .gameControleurs__button--small {
+        width: 75px;
+    }
 }
 
-.instructions p {
-    font-size: 2em !important;
+@media screen and (max-height : 700px) {
+    .gameControleurs__button {
+        width: 150px;
+    }
 
-    padding: 0;
-    margin: 0;
+    .gameControleurs__button--small {
+        width: 50px;
+    }
 }
-
 
 
 @media screen and (max-width: 1200px) {
@@ -189,16 +270,20 @@ body {
         font-size: 2em;
     }
 
-    #menu_principal img {
+    .gameControleurs {
+        flex-direction: row;
+    }
+
+    .gameControleurs__button {
         width: 150px;
     }
 
-    #musicControl img {
+    .gameControleurs__button--small {
         width: 50px;
     }
 
-    .instructions img {
-        width: 50px;
+    .instructions__img {
+        width: 75px;
         height: 50px;
     }
 
@@ -207,45 +292,18 @@ body {
         height: 50px;
     }
 
-    .instructions p {
+    .instructions__text {
         font-size: 1em;
     }
-
-
 }
 
-@media screen and (min-width: 1200px) {
 
-
-    #menu_principal {
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 1;
-        grid-row-end: 3;
-    }
-
-    #aireJeu {
-        grid-column-start: 2;
-        grid-column-end: 3;
-        grid-row-start: 1;
-        grid-row-end: 3;
-        margin-bottom: 1%;
-    }
-
-    #statsJeu {
-        grid-column-start: 3;
-        grid-column-end: 4;
-        grid-row-start: 1;
-        grid-row-end: 3;
-    }
-
-}
 
 
 @media screen and (max-width: 480px) {
     #menu_principal {
         grid-column-start: 1;
-        grid-column-end: 3;
+        grid-column-end: 2;
         grid-row-start: 2;
         grid-row-end: 3;
         padding-top: 1%;
@@ -259,18 +317,18 @@ body {
     }
 
     #statsJeu {
-        grid-column-start: 3;
+        grid-column-start: 2;
         grid-column-end: 4;
         grid-row-start: 2;
         grid-row-end: 3;
     }
 
 
-    #menu_principal img {
+    .gameControleurs__button {
         width: 75px;
     }
 
-    #musicControl img {
+    .gameControleurs__button--small {
         width: 25px;
     }
 
@@ -278,103 +336,17 @@ body {
         font-size: 1em;
     }
 
-    .instructions img {
-        width: 15px;
-        height: 15px;
+    .instructions__img {
+        width: 80px;
+        height: 50px;
     }
 
     #spacebar {
-        width: 30px;
-        height: 15px;
+        width: 125px;
+        height: 40px;
     }
 
-    .instructions p {
+    .instructions__text {
         font-size: 0.5em;
     }
-
-
-
-}
-
-
-
-
-#coeur {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 5%;
-    align-items: center;
-
-}
-
-#coeur img {
-
-    width: 100%;
-    height: auto;
-    transition-property: width, visibility, transform;
-    transition-duration: 1s;
-    transition-timing-function: linear;
-    visibility: hidden;
-
-}
-
-
-
-.Bulle {
-    border-radius: 50%;
-}
-
-/* .Obstacle {
-    outline: thick double #32a1ce;
-
-} */
-
-.BulleBleue,
-.BulleRouge,
-.BulleVerte {
-    border-radius: 50%;
-    box-shadow: 6px 6px 25px rgba(0, 0, 0, 0.5);
-}
-
-.BulleBleue {
-    /* background: linear-gradient(to bottom, rgba(15, 10, 222, 0.8), rgba(255, 255, 255, 0));
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-    background: radial-gradient(circle at bottom, #8193f6, #7688ef 20%, #1220e2c2 80%);
-    /* box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgb(255, 255, 255); */
-}
-
-.BulleVerte {
-
-    background: radial-gradient(circle at bottom, #81f687, #84ef76 20%, #05940caf 80%);
-    /* box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1); */
-
-}
-
-.BulleRouge {
-
-    background: radial-gradient(circle at bottom, #f68181, #ef7676 20%, rgba(139, 9, 5, 0.712) 80%);
-    /* box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2), inset 0px 10px 30px 5px rgba(255, 255, 255, 1); */
-}
-
-.Fleche {
-    /* background-color: black; */
-    background-image: url('./images/arrow.png');
-    background-size: contain;
-    background-position: center;
-
-
-
-}
-
-
-
-.Joueur {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-
-}
-
-.button:hover {
-    cursor: pointer;
 }
