@@ -63,11 +63,6 @@ body {
     background-position: center;
 }
 
-.button:hover {
-    cursor: pointer;
-}
-
-
 
 #menu_principal {
     background-color: white;
@@ -80,7 +75,6 @@ body {
 }
 
 .gameControleurs {
-
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -88,7 +82,6 @@ body {
     align-items: center;
     align-content: center;
     gap: 20px;
-
 }
 
 
@@ -99,6 +92,10 @@ body {
 
 .gameControleurs__button:active {
     opacity: 75%;
+}
+
+.gameControleurs__button:hover {
+    cursor: pointer;
 }
 
 
@@ -149,7 +146,7 @@ body {
 
 
 
-#statsJeu p {
+.statsJeu__text {
     font-weight: 700;
     padding: 0;
     margin: 0;
@@ -166,6 +163,11 @@ body {
 
 .instructions__text {
     text-align: center;
+    font-size: 2em;
+}
+
+.instructions__text--small {
+    font-size: 1.5em;
 }
 
 
@@ -194,7 +196,7 @@ body {
         grid-row-end: 3;
     }
 
-    #statsJeu p {
+    .statsJeu__text {
         font-size: 5em;
     }
 
@@ -217,10 +219,7 @@ body {
         height: 50px;
     }
 
-    .instructions__text {
-        font-size: 2em;
-        text-align: center;
-    }
+
 
 }
 
@@ -266,7 +265,7 @@ body {
         grid-row-start: 1;
     }
 
-    #statsJeu p {
+    .statsJeu__text {
         font-size: 2em;
     }
 
@@ -292,13 +291,11 @@ body {
         height: 50px;
     }
 
-    .instructions__text {
-        font-size: 1em;
-    }
+
 }
 
 
-
+/* FOR MOBILE */
 
 @media screen and (max-width: 480px) {
     #menu_principal {
@@ -332,8 +329,8 @@ body {
         width: 25px;
     }
 
-    #statsJeu p {
-        font-size: 1em;
+    .statsJeu__text {
+        font-size: 1.5em;
     }
 
     .instructions__img {
@@ -347,6 +344,10 @@ body {
     }
 
     .instructions__text {
-        font-size: 0.5em;
+        display: none;
+    }
+
+    .instructions__text--small {
+        display: none;
     }
 }

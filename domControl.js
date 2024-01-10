@@ -43,6 +43,22 @@ function mouseUp(direction) {
     }
 }
 
+// event for use on mobile phone: 
+document.getElementById("leftButton").addEventListener("touchstart", function () {
+    keyDownRightLeft.ArrowLeft = true;
+});
+
+document.getElementById("leftButton").addEventListener("touchend", function () {
+    keyDownRightLeft.ArrowLeft = false;
+});
+document.getElementById("rightButton").addEventListener("touchstart", function () {
+    keyDownRightLeft.ArrowRight = true;
+});
+
+document.getElementById("rightButton").addEventListener("touchend", function () {
+    keyDownRightLeft.ArrowRight = false;
+});
+
 // MANIPULATION DU DOM -----------------------------------------------------------------------------------------
 function displayALL() {
     afficherToutesLesBulles();
