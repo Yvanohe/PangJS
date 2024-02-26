@@ -1,10 +1,12 @@
 //-----------------------------------------------------------------------
-//Gestion des événements
+//Event handling
+//----------------------------------------------------------------------
 window.onresize = displayALL;
 
-//Tableau pour conserver l'event du déplacement d'un joueur si une autre touche est tapée
+//Array to keep a player's last movement event if another key is pressed
 var keyDownRightLeft = { ArrowRight: false, ArrowLeft: false };
-//les eventListeners suivant permettent de gérer le déplacement du joueur par appui continuel sur une touche fleche (gauche/droite) du clavier sans interruption si apui sur une autre touche du clavier (tel que l'espace pour tirer)
+//the following eventListeners are used to manage the player's movement by continuously pressing an arrow key (left/right) 
+//on the keyboard without interruption if another key on the keyboard is pressed (such as space to shoot)
 document.addEventListener("keydown", function (event) {
     if (event.key == 'ArrowRight') {
         keyDownRightLeft.ArrowRight = true;
@@ -59,144 +61,138 @@ document.getElementById("rightButton").addEventListener("touchend", function () 
     keyDownRightLeft.ArrowRight = false;
 });
 
-// MANIPULATION DU DOM -----------------------------------------------------------------------------------------
+
+// ---------------------------------------- 
+// DOM CONTROL
+// ----------------------------------------
+
 function displayALL() {
-    afficherToutesLesBulles();
-    afficherToutesLesFleches();
-    afficherObstacles();
-    afficherJoueur();
+    displayAllBubbles();
+    displayAllArrows();
+    displayAllObstacles();
+    displayPlayer();
     updateLevelText();
     gameArea.style.backgroundImage = "url('backgrounds/" + game.level.backgroundImage + "')";
 }
 
 function displayAllMovingObjects() {
-    afficherJoueur();
-    afficherToutesLesBulles();
-    afficherToutesLesFleches();
+    displayPlayer();
+    displayAllBubbles();
+    displayAllArrows();
 }
 
-function afficherToutesLesBulles() {
+function displayAllBubbles() {
     for (buble of game.level.bubbles) {
-        afficherObjet(buble);
+        displayObject(buble);
     }
 }
 
-function afficherToutesLesFleches() {
-    for (fleche of game.arrows) {
-        afficherObjet(fleche);
+function displayAllArrows() {
+    for (arrow of game.arrows) {
+        displayObject(arrow);
     }
 }
 
 
-function afficherObstacles() {
+function displayAllObstacles() {
     for (obstacle of game.level.obstacles) {
-        afficherObjet(obstacle);
+        displayObject(obstacle);
     }
 }
 
-function afficherJoueur() {
-    afficherObjet(game.player);
+function displayPlayer() {
+    displayObject(game.player);
 }
 
 
-function afficherObjet(objetJeu) {
-    // Si l'élément existe on le supprime du DOM :
-    removeElementObjetJeuFromDOM(objetJeu)
+function displayObject(GameObject) {
+    // If the element exists, it is deleted from the DOM : :
+    removeElementGameObjectFromDOM(GameObject)
 
-    // Création de l'élément du DOM à partir de l'objet :
-    var elementObjetJeu = creerDomElementObjeJeu(objetJeu);
-    // Vérification si un élément du DOM avec le même id existe déjà :
+    // Creation of the DOM element from the object :
+    var elementGameObject = createDomElementGameObject(GameObject);
 
-    // A jout du nouvel élément à "l'aire de jeu"
-    gameArea.insertBefore(elementObjetJeu, gameArea.firstChild);
+    // New element added to game area
+    gameArea.insertBefore(elementGameObject, gameArea.firstChild);
 }
 
 
-function creerDomElementObjeJeu(objetJeu) {
-    var elementObjetJeu = document.createElement("div");
-    elementObjetJeu.id = objetJeu.id;
-    elementObjetJeu.setAttribute("class", objetJeu.constructor.name);
-    // position de l'objet :
-    elementObjetJeu.style.left = objetJeu.positionX + "%";
-    elementObjetJeu.style.bottom = objetJeu.positionY + "%";
-    //calcul ratio hauteur / largeur aire de jeu :      
+function createDomElementGameObject(GameObject) {
+    var elementGameObject = document.createElement("div");
+    elementGameObject.id = GameObject.id;
+    elementGameObject.setAttribute("class", GameObject.constructor.name);
+    // object position :
+    elementGameObject.style.left = GameObject.positionX + "%";
+    elementGameObject.style.bottom = GameObject.positionY + "%";
+    //calculating the ratio of height to width of the game area:      
     var ratio = gameArea.offsetWidth / gameArea.offsetHeight;
-    // taille de j'objet : 
-    if (Bulle.prototype.isPrototypeOf(objetJeu)) {
+    // object size : 
+    if (Bubble.prototype.isPrototypeOf(GameObject)) {
+        // bubble speed according to ratio :
+        GameObject.speedY = ratio * GameObject.speedX;
 
-        // vitesse de la bulle selon ratio :
-        objetJeu.vitesseY = ratio * objetJeu.vitesseX;
+        var ratioBulle = GameObject.sizeY / GameObject.sizeX;
 
-        var ratioBulle = objetJeu.tailleY / objetJeu.tailleX;
-
-        if (ratio != ratioBulle) { // A AMELIORER : C'EST L'AIRE DE LA BULLE QUI DOIT RESTER CONSTANTE PAR RAPPORT A L'AIRE DE LA SURFACE DE JEU
-            // ajsutement width et height de la bulle pour qu'elle paraisse toujours ronde
-            // il faut modifier les caractéristiques de taille de la bulle pour qu'elles soient cohérentes avec la vue:
-
-            objetJeu.setTailleX(objetJeu.tailleX * (ratioBulle / ratio));
-            elementObjetJeu.style.width = objetJeu.tailleX + "%";
-
-            elementObjetJeu.style.height = objetJeu.tailleY + "%";
-
+        if (ratio != ratioBulle) {
+            // TO BE IMPROVED: THE AREA OF THE BUBBLE MUST REMAIN CONSTANT IN RELATION TO THE AREA OF THE PLAYING SURFACE---
+            // adjust the width and height of the bubble so that it always appears round:      
+            GameObject.setsizeX(GameObject.sizeX * (ratioBulle / ratio));
+            elementGameObject.style.width = GameObject.sizeX + "%";
+            elementGameObject.style.height = GameObject.sizeY + "%";
         } else {
-            elementObjetJeu.style.width = objetJeu.tailleX + "%";
-            elementObjetJeu.style.height = objetJeu.tailleY + "%";
+            elementGameObject.style.width = GameObject.sizeX + "%";
+            elementGameObject.style.height = GameObject.sizeY + "%";
         }
     }
-    else if (Joueur.prototype.isPrototypeOf(objetJeu)) {
+    else if (Player.prototype.isPrototypeOf(GameObject)) {
 
-        var ratioJoueur = objetJeu.tailleY / objetJeu.tailleX;
+        var playerRatio = GameObject.sizeY / GameObject.sizeX;
         //Player Div must allways appears square :
-        if (ratioJoueur != ratio) {
-            objetJeu.setTailleX(objetJeu.tailleX * (ratioJoueur / ratio));
+        if (playerRatio != ratio) {
+            GameObject.setsizeX(GameObject.sizeX * (playerRatio / ratio));
         }
 
-        elementObjetJeu.style.height = objetJeu.tailleY + "%";
-        elementObjetJeu.style.width = objetJeu.tailleX + "%";
+        elementGameObject.style.height = GameObject.sizeY + "%";
+        elementGameObject.style.width = GameObject.sizeX + "%";
         //modify background image :
         if (keyDownRightLeft.ArrowLeft)
-            elementObjetJeu.style.backgroundImage = "url('images/player_left.png')";
+            elementGameObject.style.backgroundImage = "url('images/player_left.png')";
         else
-            elementObjetJeu.style.backgroundImage = "url('images/player-right.png')";
+            elementGameObject.style.backgroundImage = "url('images/player-right.png')";
 
         //Player opacity :
-        elementObjetJeu.style.opacity = objetJeu.opacity;
+        elementGameObject.style.opacity = GameObject.opacity;
     }
 
-    else if (Obstacle.prototype.isPrototypeOf(objetJeu)) {
-        objetJeu.correctABWithRatio(ratio);
-        elementObjetJeu.style.height = objetJeu.tailleY + "%";
-        let longueurCorrigee = Math.sqrt((objetJeu.tailleX * Math.cos(modulo((objetJeu.orientation - 90), 180) * 3.141592653589 / 180)) * (objetJeu.tailleX * Math.cos(modulo((objetJeu.orientation - 90), 180) * 3.141592653589 / 180)) + (1 / (ratio * ratio)) * (objetJeu.tailleX * Math.sin(modulo((objetJeu.orientation - 90), 180) * 3.141592653589 / 180)) * (objetJeu.tailleX * Math.sin(modulo((objetJeu.orientation - 90), 180) * 3.141592653589 / 180)));
-        elementObjetJeu.style.width = longueurCorrigee + "%";
+    else if (Obstacle.prototype.isPrototypeOf(GameObject)) {
+        GameObject.correctABWithRatio(ratio);
+        elementGameObject.style.height = GameObject.sizeY + "%";
+        let longueurCorrigee = Math.sqrt((GameObject.sizeX * Math.cos(modulo((GameObject.orientation - 90), 180) * 3.141592653589 / 180)) * (GameObject.sizeX * Math.cos(modulo((GameObject.orientation - 90), 180) * 3.141592653589 / 180)) + (1 / (ratio * ratio)) * (GameObject.sizeX * Math.sin(modulo((GameObject.orientation - 90), 180) * 3.141592653589 / 180)) * (GameObject.sizeX * Math.sin(modulo((GameObject.orientation - 90), 180) * 3.141592653589 / 180)));
+        elementGameObject.style.width = longueurCorrigee + "%";
 
         //Rotate the div
-        elementObjetJeu.style.transform = "rotate(" + modulo((objetJeu.orientation - 90), 360) + "deg)";
-        //elementObjetJeu.style.transform = "rotate(" + modulo((objetJeu.orientation - 90), 180) + "deg)";
-        elementObjetJeu.style.transformOrigin = "4px 4px" // décalage du centre de rotation pour prendre en compte la taille de la border (2px)
+        elementGameObject.style.transform = "rotate(" + modulo((GameObject.orientation - 90), 360) + "deg)";
+        elementGameObject.style.transformOrigin = "4px 4px" // offset the centre of rotation to take into account the size of the border (2px)
 
-        //couleur de la border :
-        elementObjetJeu.style.border = objetJeu.couleur + " 4px solid";
-        elementObjetJeu.style.outline = "thick double #32a1ce";
-        //exception pour les bordures du jeu : on ne les affiches pas :
-        if (objetJeu.bordure == true) {
-            elementObjetJeu.style.border = "0px";
-            elementObjetJeu.style.outline = "0px";
+        //obstacles color :
+        elementGameObject.style.border = GameObject.color + " 4px solid";
+        elementGameObject.style.outline = "thick double #32a1ce";
+        //exception for game area borders : must not be displayed :
+        if (GameObject.isAGameBorder == true) {
+            elementGameObject.style.border = "0px";
+            elementGameObject.style.outline = "0px";
         }
 
-
-    } else if (Fleche.prototype.isPrototypeOf(objetJeu)) {
-        elementObjetJeu.style.bottom = game.player.tailleY + "%";
-
-        elementObjetJeu.style.top = 100 - objetJeu.positionY + "%"
-        // elementObjetJeu.style.height = objetJeu.tailleY + "%";
-        elementObjetJeu.style.width = objetJeu.tailleX + "%";
-
+    } else if (Arrow.prototype.isPrototypeOf(GameObject)) {
+        elementGameObject.style.bottom = game.player.sizeY + "%";
+        elementGameObject.style.top = 100 - GameObject.positionY + "%"
+        elementGameObject.style.width = GameObject.sizeX + "%";
     }
-    return elementObjetJeu;
+    return elementGameObject;
 }
 
-function removeElementObjetJeuFromDOM(objetJeu) {
-    var elementExistant = document.getElementById(objetJeu.id);
+function removeElementGameObjectFromDOM(GameObject) {
+    var elementExistant = document.getElementById(GameObject.id);
     if (elementExistant != null) {
         elementExistant.remove();
     }

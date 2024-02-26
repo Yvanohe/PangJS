@@ -31,33 +31,33 @@ body {
 }
 
 
-.BulleBleue,
-.BulleRouge,
-.BulleVerte {
+.BlueBubble,
+.RedBubble,
+.GreenBubble {
     border-radius: 50%;
     box-shadow: 6px 6px 25px rgba(0, 0, 0, 0.5);
 }
 
-.BulleBleue {
+.BlueBubble {
     background: radial-gradient(circle at bottom, #8193f6, #7688ef 20%, #1220e2c2 80%);
 }
 
-.BulleVerte {
+.GreenBubble {
     background: radial-gradient(circle at bottom, #81f687, #84ef76 20%, #05940caf 80%);
 }
 
-.BulleRouge {
+.RedBubble {
     background: radial-gradient(circle at bottom, #f68181, #ef7676 20%, rgba(139, 9, 5, 0.712) 80%);
 }
 
-.Fleche {
+.Arrow {
     background-image: url('./images/arrow.png');
     background-size: contain;
     background-position: center;
 }
 
 
-.Joueur {
+.Player {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -121,6 +121,8 @@ body {
     background-repeat: repeat;
     visibility: hidden;
     box-shadow: 6px 6px 30px rgba(0, 0, 0);
+
+
 }
 
 #aireJeu p {
@@ -128,8 +130,8 @@ body {
     padding: 2%;
     font-size: 4em;
     font-weight: 700;
-    color: red;
-    text-shadow: 5px 5px 25px red;
+    color: white;
+    text-shadow: 5px 5px 25px white;
 }
 
 #statsJeu {

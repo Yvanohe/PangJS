@@ -1,16 +1,16 @@
-class ObjetJeu {
+class GameObject {
     id;
     positionX;
     positionY;
-    tailleX;
-    tailleY;
+    sizeX;
+    sizeY;
 
-    constructor(positionX, positionY, tailleX, tailleY) {
+    constructor(positionX, positionY, sizeX, sizeY) {
         this.id = Math.random(); // Unique ID
         this.positionX = positionX;
         this.positionY = positionY;
-        this.tailleX = tailleX;
-        this.tailleY = tailleY;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
     }
 
     seDeplace(deltaX, deltaY) {
@@ -18,45 +18,44 @@ class ObjetJeu {
         this.positionY = this.positionY + deltaY;
     }
 
-    setTailleX(tailleX) {
-        this.tailleX = tailleX;
+    setsizeX(sizeX) {
+        this.sizeX = sizeX;
     }
-    setTailleY(tailleY) {
-        this.tailleY = tailleY;
+    setsizeY(sizeY) {
+        this.sizeY = sizeY;
     }
 }
 
 
-// OBJETS BULLES -------------------------------------------------------------------------------------------------------------
-class Bulle extends ObjetJeu {
-    vitesseY;
-    vitesseX;
+// ---------------------------
+// BUBBLES OBJECTS
+//---------------------------
+class Bubble extends GameObject {
+    speedY;
+    speedX;
     direction;
     canBounceback;
-    //Parametre de l'ellipse représentant la bulle :
+    //Parameter of the ellipse representing the bubble :
     //------------------------------
     ae;
     be;
     xc;
     yc;
-    //Equation de l'ellipse : (x-xc)/a² + (y-yc)/b² = 1
+    //ellipse's equation : (x-xc)/a² + (y-yc)/b² = 1
     //------------------------------
 
-    constructor(positionX, positionY, rayon, vitesseX, direction) {
-        super(positionX, positionY, rayon, rayon);
-        this.vitesseX = vitesseX;
+    constructor(positionX, positionY, radius, speedX, direction) {
+        super(positionX, positionY, radius, radius);
+        this.speedX = speedX;
         this.direction = direction;
         this.canBounceback = true;
         this.calculateEllipsParams();
     }
 
-
-
-    rebondi(orientationLimite) {
+    bounce(orientationLimite) {
         if (this.canBounceback == true) {
             this.direction = modulo(2 * orientationLimite - this.direction, 360);
         }
-
     }
 
     makeBubbleBouncy() {
@@ -72,103 +71,94 @@ class Bulle extends ObjetJeu {
     }
 
     calculateEllipsParams() {
-        this.be = this.tailleY / 2; // demi grand axe de l'ellipse
-        this.ae = this.tailleX / 2; // demi petit axe de l'ellipse
-        this.xc = this.positionX + this.ae; // centre de l'ellipse
-        this.yc = this.positionY + this.be; // centre de l'elli^se
+        this.be = this.sizeY / 2; // semi-major axis of the ellipse
+        this.ae = this.sizeX / 2; // semi minor axis of the ellipse
+        this.xc = this.positionX + this.ae; // ellipse center X
+        this.yc = this.positionY + this.be; // ellipse center Y
     }
 
-    setTailleX(tailleX) {
-        super.setTailleX(tailleX);
+    setsizeX(sizeX) {
+        super.setsizeX(sizeX);
         this.calculateEllipsParams();
     }
-    setTailleY(tailleY) {
-        super.setTailleY(tailleY);
+    setsizeY(sizeY) {
+        super.setsizeY(sizeY);
         this.calculateEllipsParams();
     }
 
-
-    eclate(typeBulle) {
+    // When a bubble burst it return 2 new bubbles of a certain type
+    burst(typeBulle) {
         var bulle1 = new typeBulle(this.positionX, this.positionY, modulo(this.direction + 45, 180));
         var bulle2 = new typeBulle(this.positionX, this.positionY, modulo(this.direction - 45, 180));
         return [bulle1, bulle2];
     }
 }
 
-class BulleBleue extends Bulle {
+class BlueBubble extends Bubble {
     constructor(positionX, positionY, direction) {
         super(positionX, positionY, 20, 0.2, direction);
-
     }
 
-
-    eclate() {
-        return super.eclate(BulleVerte);
+    burst() {
+        return super.burst(GreenBubble);
     }
 
 }
 
-class BulleVerte extends Bulle {
+class GreenBubble extends Bubble {
     constructor(positionX, positionY, direction) {
         super(positionX, positionY, 10, 0.25, direction);
     }
 
-    eclate() {
-        return super.eclate(BulleRouge);
-
+    burst() {
+        return super.burst(RedBubble);
     }
 }
 
-class BulleRouge extends Bulle {
+class RedBubble extends Bubble {
     constructor(positionX, positionY, direction) {
         super(positionX, positionY, 5, 0.3, direction);
     }
 
-    eclate() {
+    burst() {
         return [];
     }
 }
-//----------------------------------------------------------------------------------------------------------------------------------
 
-//OBJET JOUEUR----------------------------------------------------------------------------------------------------------------------
+//------------------------------------------
+// PLAYER OBJECT
+// -----------------------------------------
 
-class Joueur extends ObjetJeu {
-    pointDeVie;
-    vitesse;
+class Player extends GameObject {
+    lives;
+    speed;
     invincible = false;
     opacity = 1;
 
 
-    constructor(positionX, positionY, pointDeVie) {
+    constructor(positionX, positionY, lives) {
         super(positionX, positionY, 3, 13);
-
-        this.pointDeVie = pointDeVie;
-        this.vitesse = 0.5;
-
+        this.lives = lives;
+        this.speed = 0.5;
     }
 
-    tire() {
-
-        var fleche = new Fleche(this.positionX + this.tailleX / 2 - 0.25, this.positionY + this.tailleY, 1, 0);
-
-        return fleche;
+    shoot() {
+        var arrow = new Arrow(this.positionX + this.sizeX / 2 - 0.25, this.positionY + this.sizeY, 1, 0);
+        return arrow;
     }
 
-    estBlesse() {
+    hurt() {
         if (!this.invincible) {
-            this.pointDeVie--;
+            this.lives--;
         }
-
     }
 
     makePlayerInvincible() {
         this.invincible = true;
-
     }
 
     cancelPlayerinvincibility() {
         this.invincible = false;
-
     }
 
     makePlayerTransparent() {
@@ -180,16 +170,17 @@ class Joueur extends ObjetJeu {
     }
 
 }
-//----------------------------------------------------------------------------------------------------------------------------------
 
-//OBJET FLECHE---------------------------------------------------------------------------------------------------------------------
-class Fleche extends ObjetJeu {
-    vitesse;
+//-------------------------
+// ARROW OBJECT
+//--------------------------
+class Arrow extends GameObject {
+    speed;
     direction;
 
-    constructor(positionX, positionY, vitesse, direction) {
+    constructor(positionX, positionY, speed, direction) {
         super(positionX, positionY, 1.1, 10);
-        this.vitesse = vitesse;
+        this.speed = speed;
         this.direction = direction
     }
 }
@@ -197,10 +188,10 @@ class Fleche extends ObjetJeu {
 
 //OBSTACLE OBJECT------------------------------------------------------------------------------------------------------------------
 
-class Obstacle extends ObjetJeu {
+class Obstacle extends GameObject {
     orientation;
-    bordure = false;
-    couleur = "red"; //default colour
+    isAGameBorder = false;
+    color = "red"; //default colour
 
     //line equation parameters (y = ax + b):
     //---------------------------
@@ -210,11 +201,11 @@ class Obstacle extends ObjetJeu {
     positionXend;
     positionYend;
 
-    constructor(positionX, positionY, tailleX, tailleY, orientation) {
-        super(positionX, positionY, tailleX, tailleY);
+    constructor(positionX, positionY, sizeX, sizeY, orientation) {
+        super(positionX, positionY, sizeX, sizeY);
 
         if (orientation > 180 || orientation < 0) {
-            throw new Error("L'orientation de l'obstacle doit ête compris en 0 et 180°! ");
+            throw new Error("Obstacle orientation must be between 0 and 180°!");
         }
         else {
             this.orientation = orientation;
@@ -241,7 +232,7 @@ class Obstacle extends ObjetJeu {
         //Determining the final coordinates of the segment :
         let A = 1 + this.a * this.a;
         let B = this.positionX * (-2 - 2 * this.a * this.a);
-        let C = this.positionX * this.positionX * (1 + this.a * this.a) - this.tailleX * this.tailleX;
+        let C = this.positionX * this.positionX * (1 + this.a * this.a) - this.sizeX * this.sizeX;
         let delta = B * B - 4 * A * C;
         let x11 = (-B - Math.sqrt(delta)) / (2 * A);
         let x12 = (-B + Math.sqrt(delta)) / (2 * A);
@@ -256,18 +247,16 @@ class Obstacle extends ObjetJeu {
 //--------------------------------------------------------------------------------------------------------------------------
 
 
-// OBJET PARTIE-----------------------------------------------------------------------------------------------------------------
+// Game object----------------------------------------------------------------------------------------------------------------
 class Game {
     player;
     arrows = [];
     score;
     level;
 
-    constructor(niveau) {
-
-
-        this.level = new Level(niveau);
-        this.player = new Joueur(50, 0, 3);
+    constructor(level) {
+        this.level = new Level(level);
+        this.player = new Player(50, 0, 3);
     }
 
     startGame() {
@@ -276,7 +265,7 @@ class Game {
     }
 
     endGame() {
-        if (this.player.pointDeVie == 0) {
+        if (this.player.lives == 0) {
             this.level.levelnumber = 1;
             this.startGame();
 
@@ -290,8 +279,8 @@ class Game {
 
 //---------------------------------------------------------------------------------------------------------------------------------
 
-// OBJET LEVEL---------------------------------------------------------------------------------------------------------------------
-//Classe décrivant les différents niveau (obstacle et bulle par niveau)
+// LEVEL OBJECT---------------------------------------------------------------------------------------------------------------------
+//Class describing a level (obstacle and bubble per level)
 class Level {
     levelnumber;
     bubbles;
@@ -337,44 +326,43 @@ class Level {
         }
     }
 
-    //méthode générant les obstacles suivant le niveau. C'est ainsi ici qu'(est décrit l'architecture de chaque niveau)
+    //method for generating obstacles according to level. This is how the architecture of each level is described
     addObstacle() {
         this.obstacles = [];
-        //Dans tous les niveaux : cadre de l'aire de jeu :
-        //limite verticale gauche  (X =0, Y = 100, orientation =  180°):
+        //In all levels; play area framework :
+        //left vertical limit  (X =0, Y = 100, orientation =  180°):
         let limiteVerticaleGauche = new Obstacle(0, 100, 99.9, 0, 180)
-        limiteVerticaleGauche.bordure = true;
+        limiteVerticaleGauche.isAGameBorder = true;
         this.obstacles.push(limiteVerticaleGauche);
-        //limite verticale droite  (X =100, Y = 100, orientation =  180°):
+        //right vertical limit  (X =100, Y = 100, orientation =  180°):
         let limiteVerticaleDroite = new Obstacle(100, 100, 99.9, 0, 180);
-        limiteVerticaleDroite.bordure = true;
+        limiteVerticaleDroite.isAGameBorder = true;
         this.obstacles.push(limiteVerticaleDroite);
-        // //limite horizontale haute  (X =0, Y = 100, tailleX =100, tailleY =0, orientation =  90°):
+        // //top horizontal limit  (X =0, Y = 100, sizeX =100, sizeY =0, orientation =  90°):
         let limiteHorizontaleHaute = new Obstacle(0, 99.9, 100, 0, 90);
-        limiteHorizontaleHaute.bordure = true;
+        limiteHorizontaleHaute.isAGameBorder = true;
         this.obstacles.push(limiteHorizontaleHaute);
-        // //limite horizontale bas  (X =0, Y = 0, tailleX =100, tailleY =0, orientation =  90°):
+        // //bottom horizontal limit  (X =0, Y = 0, sizeX =100, sizeY =0, orientation =  90°):
         let limiteHorizontaleBasse = new Obstacle(0, 0.2, 100, 0, 90);
-        limiteHorizontaleBasse.bordure = true;
+        limiteHorizontaleBasse.isAGameBorder = true;
         this.obstacles.push(limiteHorizontaleBasse);
 
-        //obstacles supplémentaire en fonction du niveau :
+        //additional obstacles depending on level :
         switch (this.levelnumber) {
             case 1:
                 //obstacles :
-                //let obstacle1 = new Obstacle(73, 48.5, 20, 0, 90);
                 let obstacle1 = new Obstacle(18, 48.5, 18, 0, 90);
-                obstacle1.couleur = "black";
+                obstacle1.color = "black";
                 this.obstacles.push(obstacle1);
 
                 for (var obstacle of this.generateRectangleObstacle(9, 34, 36, 7)) {
-                    obstacle.couleur = "black";
+                    obstacle.color = "black";
                     this.obstacles.push(obstacle);
                 }
                 break;
             case 2:
                 for (var obstacle of this.generateRectangleObstacle(32, 31, 45, 4)) {
-                    obstacle.couleur = "black";
+                    obstacle.color = "black";
                     this.obstacles.push(obstacle);
                 }
                 break;
@@ -391,21 +379,21 @@ class Level {
 
             case 4:
                 for (var obstacle of this.generateRectangleObstacle(13, 77, 62, 7)) {
-                    obstacle.couleur = "bisque";
+                    obstacle.color = "bisque";
                     this.obstacles.push(obstacle);
                 }
                 break;
 
             case 5:
                 let pente1 = new Obstacle(55, 42, 15, 0, 55);
-                pente1.couleur = "green";
+                pente1.color = "green";
                 let vertical1 = new Obstacle(66.5, 76, 21, 0, 180);
-                vertical1.couleur = "green";
+                vertical1.color = "green";
 
                 let pente2 = new Obstacle(13, 90, 32, 0, 155);
-                pente2.couleur = "green";
+                pente2.color = "green";
                 let pente3 = new Obstacle(23, 57, 24, 0, 118);
-                pente3.couleur = "green";
+                pente3.color = "green";
 
                 this.obstacles.push(pente1);
                 this.obstacles.push(vertical1);
@@ -413,16 +401,13 @@ class Level {
                 this.obstacles.push(pente3);
 
                 break;
-
             default:
                 break;
-
         }
     }
 
     addBulles() {
         this.bubbles = [];
-
         switch (this.levelnumber) {
             default:
                 // only 1 blue bubble
@@ -436,21 +421,18 @@ class Level {
                 for (let bubble of this.generateBubbles("blue", 1, 0, 100, 48, 100, 135, 225)) {
                     this.bubbles.push(bubble);
                 }
-
                 break;
 
             case 2:
                 for (let bubble of this.generateBubbles("blue", 2, 0, 100, 53, 100, 135, 225)) {
                     this.bubbles.push(bubble);
                 }
-
                 break;
 
             case 3:
                 for (let bubble of this.generateBubbles("blue", 3, 0, 100, 53, 100, 135, 225)) {
                     this.bubbles.push(bubble);
                 }
-
                 break;
 
             case 4:
@@ -463,26 +445,23 @@ class Level {
                 break;
 
             case 5:
-
                 for (let bubble of this.generateBubbles("green", 8, 13, 66, 48, 100, 135, 225)) {
                     this.bubbles.push(bubble);
                 }
                 break;
-
-
         }
 
     }
 
     generateRectangleObstacle(X, Y, width, height) {
         var obstacles = [];
-        //horizontal haut du rectangle
+        // border top of rectangle
         obstacles.push(new Obstacle(X, Y, width, 0, 90));
-        //horizontal bas du rectangle
+        //border bottom of rectangle
         obstacles.push(new Obstacle(X, Y - height, width, 0, 90));
-        //verticale gauche du rectangle
+        //left vertical border of rectangle
         obstacles.push(new Obstacle(X, Y, height, 0, 180));
-        //verticale droite du rectangle
+        //right vertical border of rectangle
         obstacles.push(new Obstacle(X + width, Y, height, 0, 180));
 
         return obstacles;
@@ -495,24 +474,24 @@ class Level {
                 // random direction between chosen min and max direction
                 let direction = getRandomIntegerInInterval(minStartingDirection, maxStartingDirection);
 
-                //Isntance of a bubble depending on choosen type :
+                //instance of a bubble depending on choosen type :
                 switch (typeofBubble) {
                     case "blue":
-                        var bulle = new BulleBleue(0, 0, direction);
+                        var bulle = new BlueBubble(0, 0, direction);
                         break;
                     case "green":
-                        var bulle = new BulleVerte(0, 0, direction);
+                        var bulle = new GreenBubble(0, 0, direction);
                         break;
                     case "red":
-                        var bulle = new BulleRouge(0, 0, direction);
+                        var bulle = new RedBubble(0, 0, direction);
                         break;
                     default:
-                        var bulle = new BulleBleue(0, 0, direction);
+                        var bulle = new BlueBubble(0, 0, direction);
                         break;
                 }
 
-                let positionX = getRandomIntegerInInterval(bulle.tailleX + minXPosition, maxXPosition - bulle.tailleX);
-                let positionY = getRandomIntegerInInterval(bulle.tailleY + minYPosition, maxYPosition - bulle.tailleY);
+                let positionX = getRandomIntegerInInterval(bulle.sizeX + minXPosition, maxXPosition - bulle.sizeX);
+                let positionY = getRandomIntegerInInterval(bulle.sizeY + minYPosition, maxYPosition - bulle.sizeY);
                 bulle.seDeplace(positionX, positionY);
                 generatedBubbles.push(bulle);
             }
