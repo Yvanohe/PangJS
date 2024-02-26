@@ -263,7 +263,13 @@ function updateDOMTimer() {
 }
 
 function updateLevelText() {
-    document.getElementById("level").innerText = "Level " + game.level.levelnumber + " / 5";
+    if (game.level.levelnumber != 6) {
+        document.getElementById("level").innerText = "Level " + game.level.levelnumber + " / 5";
+    } else {
+        document.getElementById("level").innerText = "You win !";
+
+    }
+
 }
 
 function changeAudioIcon(state) {

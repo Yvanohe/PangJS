@@ -6,7 +6,7 @@ class ObjetJeu {
     tailleY;
 
     constructor(positionX, positionY, tailleX, tailleY) {
-        this.id = Math.random(); // Génération d'un ID unique
+        this.id = Math.random(); // Unique ID
         this.positionX = positionX;
         this.positionY = positionY;
         this.tailleX = tailleX;
@@ -46,18 +46,12 @@ class Bulle extends ObjetJeu {
         this.vitesseX = vitesseX;
         this.direction = direction;
         this.calculateEllipsParams();
-
-        //FAIRE SETETTER DE TAILLE X et TAILLE Y et fonction RECALCUL DE ae et be !!
     }
 
 
 
     rebondi(orientationLimite) {
         this.direction = modulo(2 * orientationLimite - this.direction, 360);
-    }
-
-    checkCollision(joueur, tableauFleches) {
-        // A mettre dans le controleur
     }
 
     seDeplace(deltaX, deltaY) {
@@ -324,6 +318,10 @@ class Level {
                 this.backgroundImage = "level5-NorvegianFjord.png"
                 this.time = 60 * 1000;
                 break;
+            case 6:
+                this.backgroundImage = "game_finished.png"
+                this.time = 60 * 1000;
+                break;
         }
     }
 
@@ -392,21 +390,19 @@ class Level {
                 let vertical1 = new Obstacle(66.5, 76, 21, 0, 180);
                 vertical1.couleur = "green";
 
-
-
                 let pente2 = new Obstacle(13, 90, 32, 0, 155);
                 pente2.couleur = "green";
                 let pente3 = new Obstacle(23, 57, 24, 0, 118);
                 pente3.couleur = "green";
-                // let pente3 = new Obstacle(55, 42, 15, 0, 55);
-                // pente1.couleur = "green";
-
 
                 this.obstacles.push(pente1);
                 this.obstacles.push(vertical1);
                 this.obstacles.push(pente2);
                 this.obstacles.push(pente3);
 
+                break;
+
+            default:
                 break;
 
         }
@@ -418,9 +414,9 @@ class Level {
         switch (this.levelnumber) {
             default:
                 // only 1 blue bubble
-                for (let bubble of this.generateBubbles("blue", 1, 0, 100, 48, 100, 135, 225)) {
-                    this.bubbles.push(bubble);
-                }
+                // for (let bubble of this.generateBubbles("blue", 1, 0, 100, 48, 100, 135, 225)) {
+                //     this.bubbles.push(bubble);
+                // }
                 break;
 
             case 1:

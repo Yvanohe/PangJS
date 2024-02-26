@@ -1,6 +1,7 @@
 const TEXT_TIMEFINISH = "PERDU, TEMPS ECOULE !";
 const TEXT_NOMORELIVES = "VOUS AVEZ PERDU ! VIES EPUISEES !";
 const STARTING_LEVEL = 1;
+const LAST_LEVEL = 6;
 const TEXT_GAMEFINISHED = "BRAVO VOUS AVEZ TERMINE LE JEU EN ";
 
 
@@ -35,7 +36,6 @@ function startGame() {
     updateLevelText();
     updateDOMTimer();
     resumeGame();
-    //music.play();
 
 }
 
@@ -94,18 +94,18 @@ function endRound() {
         music.pause();
         music.currentTime = 0;
     } else {
-        if (game.level.levelnumber != 5) {
+        removeGameElementsfromPlayArea();
+        game.endGame();
+        if (game.level.levelnumber == LAST_LEVEL) { // Game finished
             removeGameElementsfromPlayArea();
-            game.endGame();
-            displayALL();
-        } else {
             clearInterval(levelTimer);
             clearInterval(globalTimer);
             clearInterval(intervalDeplacementObjetsAutonomes);
             clearInterval(intervalDisplatAllObjects);
             clearInterval(intervalMovePlayer);
             showResults(TEXT_GAMEFINISHED + totalTime + "s !");
-
+        } else {
+            displayALL();
         }
     }
 }
