@@ -4,8 +4,7 @@ const STARTING_LEVEL = 1;
 const LAST_LEVEL = 6;
 const TEXT_GAMEFINISHED = "BRAVO VOUS AVEZ TERMINE LE JEU EN ";
 
-
-
+// initialization----------
 var gameArea = document.getElementById("aireJeu");
 var gamePaused = false;
 var intervalDeplacementObjetsAutonomes;
@@ -19,8 +18,7 @@ var game;
 var music = new Audio('./sons/music.mp3');
 music.volume = 0.8;
 music.loop = true;
-
-
+//--------------------------
 
 
 
@@ -230,7 +228,8 @@ function checkCollision() {
         //Collision avec Obstacle :   
         for (obstacle of game.level.obstacles) {
             if (isCollisionWithBubble(bulle, obstacle.positionX, obstacle.positionXend, obstacle.positionY, obstacle.positionY - obstacle.tailleX, obstacle.a, obstacle.b, obstacle.orientation)) {
-                bulle.rebondi(obstacle.orientation);
+                makeBubbleBounce(bulle, obstacle.orientation);
+                //bulle.rebondi(obstacle.orientation);
             }
         }
 
@@ -338,7 +337,6 @@ function isCollisionWithBubble(bulle, obstaclePositionX, obstacleEndingX, obstac
             let y2 = (-B + Math.sqrt(delta)) / (2 * A);
 
             if (y1 < obstaclePositionY && y1 > obstacleEndingY || y2 < obstaclePositionY && y2 > obstacleEndingY) {
-
                 return true;
             } else {
                 return false;
@@ -350,7 +348,6 @@ function isCollisionWithBubble(bulle, obstaclePositionX, obstacleEndingX, obstac
 }
 
 function hurtPlayer(player) {
-
     player.estBlesse();
     if (!player.invincible) {
         //play song
@@ -358,11 +355,11 @@ function hurtPlayer(player) {
         cri.play();
 
         hidePlayerLives();
+        // when hit, player becomes invinble during 2s.
         player.makePlayerInvincible();
         timerOpacity = setInterval(() => changePlayerOpacity(player), 200);
         setTimeout(() => cancelPlayerinvincibility(player), 2000);
     }
-
 }
 
 function changePlayerOpacity(player) {
@@ -376,3 +373,15 @@ function cancelPlayerinvincibility(player) {
     player.cancelPlayerinvincibility();
     clearInterval(timerOpacity);
 }
+
+function makeBubbleBounce(bubble, orientation) {
+    if (bubble.canBounceback) {
+        bubble.rebondi(orientation);
+        // To reduce bubble to be "catch" by an edge, bubble cannot bounce back during 100ms
+        bubble.disableBubbleBouncy();
+        setTimeout(() => bubble.makeBubbleBouncy(), 100);
+    }
+
+}
+
+

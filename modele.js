@@ -32,6 +32,7 @@ class Bulle extends ObjetJeu {
     vitesseY;
     vitesseX;
     direction;
+    canBounceback;
     //Parametre de l'ellipse représentant la bulle :
     //------------------------------
     ae;
@@ -45,13 +46,24 @@ class Bulle extends ObjetJeu {
         super(positionX, positionY, rayon, rayon);
         this.vitesseX = vitesseX;
         this.direction = direction;
+        this.canBounceback = true;
         this.calculateEllipsParams();
     }
 
 
 
     rebondi(orientationLimite) {
-        this.direction = modulo(2 * orientationLimite - this.direction, 360);
+        if (this.canBounceback == true) {
+            this.direction = modulo(2 * orientationLimite - this.direction, 360);
+        }
+
+    }
+
+    makeBubbleBouncy() {
+        this.canBounceback = true;
+    }
+    disableBubbleBouncy() {
+        this.canBounceback = false;
     }
 
     seDeplace(deltaX, deltaY) {
