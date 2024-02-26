@@ -105,6 +105,7 @@ function endRound() {
             clearInterval(intervalDisplatAllObjects);
             clearInterval(intervalMovePlayer);
             showResults(TEXT_GAMEFINISHED + totalTime + "s !");
+
         }
     }
 }

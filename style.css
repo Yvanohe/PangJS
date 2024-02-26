@@ -297,7 +297,7 @@ body {
 
 /* FOR MOBILE */
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 576px) {
     #menu_principal {
         grid-column-start: 1;
         grid-column-end: 2;
