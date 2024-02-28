@@ -373,8 +373,8 @@ function makeBubbleBounce(bubble, orientation) {
     if (bubble.canBounceback) {
         bubble.bounce(orientation);
         // To reduce bubble to be "catch" by an edge, bubble cannot bounce back during 150ms
-        bubble.disableBubbleBouncy();
-        setTimeout(() => bubble.makeBubbleBouncy(), 150);
+        // bubble.disableBubbleBouncy();
+        // setTimeout(() => bubble.makeBubbleBouncy(), 10);
     }
 }
 
