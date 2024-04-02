@@ -231,21 +231,31 @@ body {
 
 @media screen and (max-height : 1000px) {
     .gameControleurs__button {
-        width: 100px;
+        width: 200px;
     }
 
     .gameControleurs__button--small {
         width: 75px;
+    }
+
+    .instructions__img {
+        width: 100px;
+        height: 75px;
     }
 }
 
 @media screen and (max-height : 700px) {
     .gameControleurs__button {
-        width: 75px;
+        width: 150px;
     }
 
     .gameControleurs__button--small {
         width: 50px;
+    }
+
+    .instructions__img {
+        width: 100px;
+        height: 75px;
     }
 }
 
