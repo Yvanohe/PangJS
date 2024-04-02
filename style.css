@@ -1,3 +1,7 @@
+html {
+    overflow-y: hidden;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -199,7 +203,7 @@ body {
     }
 
     .statsJeu__text {
-        font-size: 5em;
+        font-size: 4em;
     }
 
 
@@ -227,7 +231,7 @@ body {
 
 @media screen and (max-height : 1000px) {
     .gameControleurs__button {
-        width: 200px;
+        width: 100px;
     }
 
     .gameControleurs__button--small {
@@ -237,7 +241,7 @@ body {
 
 @media screen and (max-height : 700px) {
     .gameControleurs__button {
-        width: 150px;
+        width: 75px;
     }
 
     .gameControleurs__button--small {
